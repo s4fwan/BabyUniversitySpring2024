@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "Baby University",
+    "slug": "baby-university-app",
+    "version": "1.0.0",
+    "sdkVersion": "51.0.32", 
+    "plugins": [
+        "expo-font"
+    ]
+  }
+}
