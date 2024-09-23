@@ -5,9 +5,8 @@ import Carousel from "react-native-reanimated-carousel";
 import { BASE_API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRoute } from "@react-navigation/native";
-import { useNavigation } from "@react-navigation/native";
 import { Audio } from "expo-av";
-import { useReadAloud } from "../SettingsScreen/Storage"; // used to keep track to ensure slider option for read aloud is set to true or false
+import { useReadAloud } from "../SettingsScreen/Storage"; 
 
 import Page0 from "../BookPages/page0";
 import Page1 from "../BookPages/page1";
@@ -115,18 +114,19 @@ const SwipeBook = (isMuted) => {
   }
 
   useEffect(() => {
-    const saveBookId = async () => {
+    const fetchCurrentPage = async () => {
       try {
         await AsyncStorage.setItem("bookId", bookId);
         const userId = await AsyncStorage.getItem("userId");
         const response = await axios.get(`${BASE_API_URL}/tracker-books/current-page/${userId}/${bookId}`);
         setCurrentPage(response.data.currentPage);
+        carouselRef.current.scrollTo({ index: response.data.currentPage-1, animated: false });
       } catch (e) {
         console.error("Failed to save book ID:", e);
       }
     };
     if (bookId) {
-      saveBookId();
+      fetchCurrentPage();
     }
   }, [bookId]);
 
@@ -151,12 +151,14 @@ const SwipeBook = (isMuted) => {
 
   const sendCurrentPageToBackend = async (page) => {
     try {
+      const userId = await AsyncStorage.getItem("userId");
+      const bookId = await AsyncStorage.getItem("bookId");
       const response = await axios.put(
         `${BASE_API_URL}/tracker-books/update-current-page`,
         {
-          userId: AsyncStorage.getItem("userId"),
-          bookId: AsyncStorage.getItem("bookId"),
-          currentPage: page,
+          userId,
+          bookId,
+          currentPage: page+1,
         }
       );
       if (response.status !== 200) {

@@ -23,9 +23,9 @@ const BedRoomScreen = ({ navigation }) => {
     navigation.navigate("SwipeBook", { bookId });
   };
 
-  const handleLogout = () => {
+  const handleLogout =  async () => {
     try {
-      AsyncStorage.removeItem("userId");
+      await AsyncStorage.removeItem("userId");
       console.log("Logged out");
       navigation.navigate("Logout");
     } catch (error) {

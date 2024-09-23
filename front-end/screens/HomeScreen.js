@@ -6,9 +6,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const handleSignOut = () => {
+  const handleSignOut = async () => {
     try {
-      AsyncStorage.removeItem("userId");
+      await AsyncStorage.removeItem("userId");
       navigation.replace("Login");
     } catch (error) {
       console.error("Error:", error);

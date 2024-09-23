@@ -38,7 +38,7 @@ const handleSignup = async () => {
       const requestBody = { email, pin, username: name };
       console.log(requestBody);
       const response = await axios.post(requestUrl, requestBody);
-      AsyncStorage.setItem('userId', response.data.userId);
+      await AsyncStorage.setItem('userId', response.data.userId);
       navigation.replace('Bedroom'); 
     } catch (error) {
       setErrors({ general: error.message });

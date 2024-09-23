@@ -34,6 +34,7 @@ router.get("/current-page/:userId/:bookId", async (req, res) => {
   }
 });
 router.put("/update-current-page", async (req, res) => {
+
   const userId = new mongoose.Types.ObjectId(req.body.userId);
   const bookId = new mongoose.Types.ObjectId(req.body.bookId);
   const { currentPage } = req.body;
