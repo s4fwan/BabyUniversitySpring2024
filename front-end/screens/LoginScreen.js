@@ -2,39 +2,48 @@ import React, { useState, useEffect } from 'react';
 import { Text, View, TextInput, Button, StyleSheet, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import UIBallAnimation from '../ballAnimation/ballAnimation';
-import { auth } from '../firebase'; // Make sure the path to your firebase config is correct
+import axios from 'axios';
+import {BASE_API_URL} from "@env"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [email, setEmail] = useState('');
+    const [pin, setPin] = useState('');
     const [isLoginClicked, setIsLoginClicked] = useState(false);
 
     const navigation = useNavigation();
 
-    useEffect(() => {
-        const unsubscribe = auth.onAuthStateChanged(user => {
-            if (user) {
-                navigation.navigate("Bedroom");
-            }
-        });
-        return unsubscribe;
-    }, []);
+    // useEffect(() => {
+    //     const unsubscribe = auth.onAuthStateChanged(user => {
+    //         if (user) {
+    //             navigation.navigate("Bedroom");
+    //         }
+    //     });
+    //     return unsubscribe;
+    // }, []);
 
     const handleSignup = () => {
         navigation.navigate('SignUp');
     };
 
     const handleLogin = () => {
+        console.log(email, pin);
+        console.log(`${BASE_API_URL}/users/sign-in`)
         setIsLoginClicked(true);
-        auth
-            .signInWithEmailAndPassword(username, password)
-            .then(userCredentials => {
-                const user = userCredentials.user;
-                console.log("Logged in with user", user.email);
-                navigation.navigate('Bedroom');
-            })
-            .catch(error => alert(error.message))
-            .finally(() => setIsLoginClicked(false));
+        axios.post(`${BASE_API_URL}/users/sign-in`, {email, pin}).then(response => {
+            if (response.status === 200) {
+                AsyncStorage.setItem('userId', response.data.userId);
+                console.log("Logged in with user", response.data.userEmail);
+                navigation.navigate('Bedroom');  
+            } else {
+                alert(response.data.message);  
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while logging in');
+        })
+        .finally(() => setIsLoginClicked(false));  
     };
 
     return (
@@ -44,22 +53,22 @@ const LoginScreen = () => {
             </View>
             <View style={styles.inputContainer}>
                 <View style={styles.inputRow}>
-                    <Text style={styles.label}>Username:</Text>
+                    <Text style={styles.label}>Email:</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="Enter your username"
-                        value={username}
-                        onChangeText={text => setUsername(text)}
+                        placeholder="Enter your email"
+                        value={email}
+                        onChangeText={text => setEmail(text)}
                     />
                 </View>
                 <View style={styles.inputRow}>
-                    <Text style={styles.label}>Password:</Text>
+                    <Text style={styles.label}>Pin:</Text>
                     <TextInput
                         style={styles.input}
-                        placeholder="Enter your password"
+                        placeholder="Enter your pin"
                         secureTextEntry
-                        value={password}
-                        onChangeText={text => setPassword(text)}
+                        value={pin}
+                        onChangeText={text => setPin(text)}
                     />
                 </View>
             </View>
@@ -67,7 +76,7 @@ const LoginScreen = () => {
                 <TouchableOpacity
                     onPress={handleLogin}
                     style={styles.button}
-                    disabled={isLoginClicked} // Disable button when login is clicked
+                    disabled={isLoginClicked} 
                 >
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
