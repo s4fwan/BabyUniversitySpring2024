@@ -1,8 +1,9 @@
-import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-//import HomeScreen from './screens/HomeScreen';
 import BedRoomScreen from './Bedroom/BedRoomScreen';
 import PinEntryScreen from './PinPage'
 import LoginScreen from './screens/LoginScreen';
@@ -13,11 +14,13 @@ import LogoutSuccessful from './Logout Page';
 import UsernameDisplay from './UserName'
 import SettingsScreen from './SettingsScreen/settings'
 import { ReadAloudProvider } from './SettingsScreen/Storage';
+import ChangePin from './screens/ChangePinScreen';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <ReadAloudProvider>
+    
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
@@ -29,12 +32,13 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false }} name="ParentUI" component={ParentUI} />
         <Stack.Screen options={{ headerShown: false }} name="UserName" component={UsernameDisplay} />
         <Stack.Screen options={{ headerShown: false }} name="Settings" component={SettingsScreen} />
+        <Stack.Screen options={{ headerShown: false }} name="ChangePin" component={ChangePin} />
 
       </Stack.Navigator>
       
     </NavigationContainer>
     </ReadAloudProvider>
-
+    
   );
 }
 
@@ -46,3 +50,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+
+
+

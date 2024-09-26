@@ -1,30 +1,23 @@
-export async function getDataFromDB(db) {
-  
-  // Reference to the document in the "User" collection named "Example"
-  const userDocRef = db.collection('user').doc('example');
+const express = require("express");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const userRoutes = require("./routes/user")
+const bookRoutes = require("./routes/book")
+const questionRoutes = require("./routes/question")
+const trackerBookRoutes = require("./routes/TrackerBook")
 
-  try {
-      const doc = await userDocRef.get(); // Wait for the document retrieval
-      if (!doc.exists) {
-          console.log('Document not found!');
-          return null; // Return null if document doesn't exist
-      } else {
-          // Return the document data
-          return doc.data();
-      }
-  } catch (error) {
-      console.error('Error getting document:', error);
-      throw error; // Throw the error to handle it in the calling code
-  }
-}
+const app = express();
+mongoose.connect("mongodb+srv://BabyUniversity:BabyUniversity123@cluster0.kqoqi.mongodb.net/user?retryWrites=true&w=majority&appName=Cluster0")
+.then(()=>console.log("Connect to database"))
+.catch((err)=>console.log(err));
 
-export async function saveDataToDB (db, userData) {
-  try {
-    const docRef = await db.collection('user').add(userData);
-    console.log('Document written with ID: ', docRef.id);
-    return docRef.id;
-  } catch (error) {
-    console.error('Error saving document:', error);
-    throw error; // Throw the error to handle it in the calling code
-  }
-}
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use("/api/v1/users",userRoutes)
+app.use("/api/v1/books", bookRoutes)
+app.use("/api/v1/questions", questionRoutes)
+app.use("/api/v1/tracker-books", trackerBookRoutes)
+
+module.exports = app

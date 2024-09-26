@@ -28,6 +28,9 @@ const MenuButton = ({ userMode, onOptionPress }) => {
         console.log(option);
         navigation.navigate('Settings');
         // navigate to the settings view page
+      }else if (option === 'Change Pin') {
+        console.log(option);
+        navigation.navigate('ChangePin');
       }
     } else {
       if (option === 'Switch to Kids mode') {
@@ -56,6 +59,7 @@ const MenuButton = ({ userMode, onOptionPress }) => {
     { label: 'UserName', image: userIcon },
     { label: 'Settings', image: settingsIcon },
     { label: 'Parents Mode', image: parentsIcon },
+    {label: 'Change Pin',image: parentsIcon}
   ];
 
   // Options for kids mode

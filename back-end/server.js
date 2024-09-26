@@ -1,23 +1,52 @@
-import express from 'express';
-import open from 'open';
-import router from './route.js';
-import cors from 'cors';
+const app = require("./app");
+const debug = require("debug")("");
+const http = require("http");
 
-// Start the server
-const PORT = process.env.PORT || 3000;
+const normalizePort = val => {
+  var port = parseInt(val, 10);
 
-// Create an Express application
-const app = express();
-app.use(express.json());
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
 
-// Enable CORS
-app.use(cors());
+  if (port >= 0) {
+    // port number
+    return port;
+  }
 
-// Use your router
-app.use('/', router);
+  return false;
+};
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-  // Open the browser
-  //open(`http://localhost:${PORT}`);
-});
+const onError = error => {
+  if (error.syscall !== "listen") {
+    throw error;
+  }
+  const bind = typeof port === "string" ? "pipe " + port : "port " + port;
+  switch (error.code) {
+    case "EACCES":
+      console.error(bind + " requires elevated privileges");
+      process.exit(1);
+      break;
+    case "EADDRINUSE":
+      console.error(bind + " is already in use");
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+};
+
+const onListening = () => {
+  const addr = server.address();
+  const bind = typeof port === "string" ? "pipe " + port : "port " + port;
+  debug("Listening on " + bind);
+};
+
+const port = normalizePort(process.env.PORT || "4000");
+app.set("port", port);
+
+const server = http.createServer(app);
+server.on("error", onError);
+server.on("listening", onListening);
+server.listen(port);
