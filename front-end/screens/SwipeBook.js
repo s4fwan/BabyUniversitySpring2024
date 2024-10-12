@@ -14,8 +14,7 @@ import { useRoute } from "@react-navigation/native";
 import { Audio } from "expo-av";
 import { useReadAloud } from "../SettingsScreen/Storage";
 import FinalPage from "../components/FinalPage";
-
-
+import CoverPage from "../components/CoverPage";
 import BookPage from "../components/BookPage";
 import QuizPage from "../components/QuizPage";
 
@@ -105,7 +104,11 @@ const SwipeBook = (isMuted) => {
           key: "finalPage",
           component: <FinalPage />,
         };
-        const combinedData = [...bookData, ...quizData, finalPage];
+        const coverPage = {
+          key: "coverPage",
+          component: <CoverPage />,
+        };
+        const combinedData = [coverPage,...bookData, ...quizData, finalPage];
 
         setBookPages(combinedData);
       } catch (e) {

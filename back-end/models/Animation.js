@@ -13,6 +13,10 @@ const AnimationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.Mixed,
     required: true,
   },
+  highlightText: {
+    type: mongoose.Schema.Types.Mixed,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("Animation", AnimationSchema);
