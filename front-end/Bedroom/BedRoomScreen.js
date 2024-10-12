@@ -44,7 +44,7 @@ const BedRoomScreen = ({ navigation }) => {
       <MenuButton userMode="parents" />
       {/* header text title */}
       <View style={styles.headerTextContainer}>
-        <Text style={styles.bedroomTitle}>Bedroom</Text>
+        <Text style={styles.bedroomTitle}>Bookshelf</Text>
       </View>
 
       {/* Clock */}
@@ -96,15 +96,15 @@ const BedRoomScreen = ({ navigation }) => {
       />
 
       {/* ball */}
-      <Image
+      {/* <Image
         source={require("../assets/bedRoomImages/basketball.png")}
         style={styles.ball}
-      />
+      /> */}
       {/* books capinet */}
-      <Image
+      {/* <Image
         source={require("../assets/bedRoomImages/booksCapinet.png")}
         style={styles.booksCapinet}
-      />
+      /> */}
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>

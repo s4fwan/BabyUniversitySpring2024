@@ -17,6 +17,10 @@ const QuestionSchema = new mongoose.Schema({
   correctAnswer: {
     type: Number,
     required: true,
+  },
+  selectedAnswer:{
+    type: Number,
+    required: false,
   }
 });
 

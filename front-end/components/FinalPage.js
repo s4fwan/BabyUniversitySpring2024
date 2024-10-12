@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import ParentUI from '../ParentUI/ParentUI';
 import picture from '../picture.png';
-import BackButton from './BackButton';
+import BackButton from '../BookPages/BackButton';
 
-const Page24 = () => {
-
+const FinalPage = () => {
 
   return (
     <View style={styles.container}>
@@ -65,4 +64,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Page24;
+export default FinalPage;
