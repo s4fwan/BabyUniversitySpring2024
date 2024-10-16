@@ -1,6 +1,6 @@
 const books = [
     {
-      bookId: '66d1e3e2622e47f67c07afab',
+      bookId: '670f65b86d3269dbe516a6ed',
       imageLink: require('../assets/bedRoomImages/books.png'),
     },
   ];

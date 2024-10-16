@@ -3,22 +3,62 @@ import PropTypes from "prop-types";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import LottieView from "lottie-react-native";
 import BackButton from "../BookPages/BackButton";
+import { Audio } from 'expo-av';
 
 const BookPage = ({ page, isActive }) => {
+  const soundRef = useRef(null);
   const imageAnimationRef = useRef(null);
   const highlightTextRef = useRef(null);
 
+
+
   useEffect(() => {
-    if (isActive && imageAnimationRef.current) {
-      imageAnimationRef.current.play();
-    } else if (imageAnimationRef.current) {
-      imageAnimationRef.current.reset();
+    async function loadSound() {
+      try {
+        const { sound } = await Audio.Sound.createAsync({
+          uri: page.sound, 
+        });
+        soundRef.current = sound;
+      } catch (error) {
+        console.log("Failed to load sound:", error);
+      }
     }
-    if (isActive && highlightTextRef.current) {
-      highlightTextRef.current.play();
-    } else if (highlightTextRef.current) {
-      highlightTextRef.current.reset();
+  
+    loadSound();
+      return () => {
+      if (soundRef.current) {
+        soundRef.current.unloadAsync(); 
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    async function handleSoundPlayback() {
+      if (isActive) {
+        if (soundRef.current) {
+          await soundRef.current.setPositionAsync(0); 
+          await soundRef.current.playAsync(); 
+        }
+        if (imageAnimationRef.current) {
+          imageAnimationRef.current.play();
+        }
+        if (highlightTextRef.current) {
+          highlightTextRef.current.play();
+        }
+      } else {
+        if (soundRef.current) {
+          await soundRef.current.pauseAsync(); 
+        }
+        if (imageAnimationRef.current) {
+          imageAnimationRef.current.reset();
+        }
+        if (highlightTextRef.current) {
+          highlightTextRef.current.reset();
+        }
+      }
     }
+
+    handleSoundPlayback();
   }, [isActive]);
 
   const handlePress = () => {
@@ -26,9 +66,15 @@ const BookPage = ({ page, isActive }) => {
       imageAnimationRef.current.reset();
       imageAnimationRef.current.play();
     }
-    if(highlightTextRef.current) {
+    if (highlightTextRef.current) {
       highlightTextRef.current.reset();
       highlightTextRef.current.play();
+    }
+    if (soundRef.current) {
+      soundRef.current.setPositionAsync(0);
+      soundRef.current.playAsync();
+    }else{
+      console.log("soundRef is not loaded");
     }
   };
 
@@ -38,25 +84,25 @@ const BookPage = ({ page, isActive }) => {
       <TouchableOpacity onPress={handlePress}>
         <LottieView
           ref={imageAnimationRef}
-          source={page.image}
+          source={page.animation.image}
           loop={false}
           autoPlay={false}
           style={{ width: 300, height: 300 }}
         />
       </TouchableOpacity>
-        {page.highlightText ? (
-          <TouchableOpacity>
+      {page.animation.highlightText ? (
+        <TouchableOpacity>
           <LottieView
             ref={highlightTextRef}
-            source={page.highlightText}
+            source={page.animation.highlightText}
             loop={false}
             autoPlay={false}
             style={{ width: 500, height: 100 }}
           />
         </TouchableOpacity>
-        ) : (
-          <Text style={styles.text}>{page.description}</Text>
-        )}
+      ) : (
+        <Text style={styles.text}>{page.animation.description}</Text>
+      )}
     </View>
   );
 };

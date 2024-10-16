@@ -1,17 +1,5 @@
 const mongoose = require("mongoose");
 
-const PageSchema = new mongoose.Schema({
-  description: {
-    type: String,
-    required: true,
-  },
-  animation: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Animation",
-    required: true,
-  },
-});
-
 const BookSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -27,10 +15,16 @@ const BookSchema = new mongoose.Schema({
   },
   pages: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Animation', 
-      required: true,
-    }
+      animation: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Animation",
+        required: true,
+      },
+      sound: {
+        type: String,
+        default: "",
+      },
+    },
   ],
 });
 

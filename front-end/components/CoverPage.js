@@ -1,15 +1,55 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { View, StyleSheet, Text, SafeAreaView } from "react-native";
 import BackButton from "../BookPages/BackButton";
 import CoverImage from "../assets/svg/coverImage.svg";
 import { useFonts } from "expo-font";
-const CoverPage = () => {
-  let [fontsLoaded] = useFonts({
+import { Audio } from 'expo-av';
+
+const CoverPage = ({ isActive }) => {
+  const [fontsLoaded] = useFonts({
     "KulimPark-Bold": require("../assets/fonts/KulimPark-Bold.ttf"),
   });
+
+
+  const soundRef = useRef(null);
+
+  useEffect(() => {
+    async function loadSound() {
+      try {
+        const { sound } = await Audio.Sound.createAsync({
+          uri: 'https://storage.googleapis.com/tavola-italiano-res/sound/BookAudioPage0.mp3',
+        });
+        soundRef.current = sound;
+        if (isActive) {
+          await sound.playAsync(); 
+        }
+        
+      } catch (error) {
+        console.error("Error loading sound: ", error);
+      }
+    }
+
+    loadSound();
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.unloadAsync();
+      }
+    };
+  }, [isActive]); 
+
+  useEffect(() => {
+    if (isActive && soundRef.current) {
+      soundRef.current.playAsync();
+    } else if (!isActive && soundRef.current) {
+      soundRef.current.pauseAsync(); 
+    }
+  }, [isActive]); 
+
   if (!fontsLoaded) {
     return null; 
   }
+
+
   return (
     <View style={styles.container}>
       <BackButton />
@@ -51,13 +91,13 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: "KulimPark-Bold",
     color: "#E15D50",
-    fontSize: "45",
+    fontSize: 45,
     marginTop: -250,
   },
   title2: {
     fontFamily: "KulimPark-Bold",
     color: "#32B1B7",
-    fontSize: "45",
+    fontSize: 45,
   },
   author: {
     fontFamily: "KulimPark-Bold",
@@ -65,7 +105,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: "90%",
     left: "20%",
-    fontSize: "20",
+    fontSize: 20,
   },
 });
 

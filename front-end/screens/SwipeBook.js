@@ -87,26 +87,32 @@ const SwipeBook = (isMuted) => {
           axios.get(`${BASE_API_URL}/books/${bookId}`),
           axios.get(`${BASE_API_URL}/questions/${bookId}`),
         ]);
-        // const bookData = bookResponse.data.pages.map((page, index) => ({
-        //   key: `bookPage${index}`,
-        //   component: <BookPage page={page} />,
-        // }));
         const bookData = bookResponse.data.pages.map((page, index) => ({
           key: `bookPage${index}`,
           page,
         }));
       
+        // const quizData = quizResponse.data.map((question, index) => ({
+        //   key: `quizPage${index}`,
+        //   component: <QuizPage quiz={question} />,
+        // }));
+        // const finalPage = {
+        //   key: "finalPage",
+        //   component: <FinalPage />,
+        // };
+        // const coverPage = {
+        //   key: "coverPage",
+        //   component: <CoverPage />,
+        // };
         const quizData = quizResponse.data.map((question, index) => ({
           key: `quizPage${index}`,
-          component: <QuizPage quiz={question} />,
+          quiz: question,  
         }));
         const finalPage = {
           key: "finalPage",
-          component: <FinalPage />,
         };
         const coverPage = {
           key: "coverPage",
-          component: <CoverPage />,
         };
         const combinedData = [coverPage,...bookData, ...quizData, finalPage];
 
@@ -151,9 +157,9 @@ const SwipeBook = (isMuted) => {
       : undefined;
   }, [sound]);
 
-  const renderItem = ({ item }) => (
-    <View style={styles.pageContainer}>{item.component}</View>
-  );
+  // const renderItem = ({ item }) => (
+  //   <View style={styles.pageContainer}>{item.component}</View>
+  // );
   async function playSwipeSound() {
     const { sound } = await Audio.Sound.createAsync(
       require("../assets/booksSFX/PageSwipe_SoundEffect.mp3")
@@ -211,19 +217,57 @@ const SwipeBook = (isMuted) => {
       width={screenHeight}
       height={screenWidth}
       renderItem={({ item, index }) => {
+        // if (item.page) {
+        //   return (
+        //     <BookPage
+        //       page={item.page}
+        //       ref={(el) => (pageRefs.current[index] = el)} 
+        //       isActive={currentPage-1 === index}
+        //     />
+        //   );
+        // }
+        // if (item.component) {
+        //   return item.component;
+        // }
+        // return null;
+        const isActive = currentPage - 1 === index;
         if (item.page) {
           return (
             <BookPage
               page={item.page}
               ref={(el) => (pageRefs.current[index] = el)} 
-              isActive={currentPage-1 === index}
+              isActive={isActive}
             />
           );
         }
-        if (item.component) {
-          return item.component;
+    
+        if (item.quiz) {
+          return (
+            <QuizPage
+              quiz={item.quiz}
+              ref={(el) => (pageRefs.current[index] = el)} 
+              isActive={isActive}
+            />
+          );
         }
-        return null;
+    
+        if (item.key === "finalPage") {
+          return (
+            <FinalPage
+              ref={(el) => (pageRefs.current[index] = el)} 
+              isActive={isActive}
+            />
+          );
+        }
+    
+        if (item.key === "coverPage") {
+          return (
+            <CoverPage
+              ref={(el) => (pageRefs.current[index] = el)} 
+              isActive={isActive}
+            />
+          );
+        }
       }}
       onSnapToItem={handlePageChange}
       onScrollEnd={() => {

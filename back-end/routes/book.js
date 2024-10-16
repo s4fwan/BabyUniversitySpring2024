@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Book = require('../models/Book'); 
-const Animation = require('../models/Animation');
 
 router.get('/:id', async (req, res) => {
   try {
-    const book = await Book.findById(req.params.id).populate('pages');
+    const book = await Book.findById(req.params.id).populate('pages.animation');
     if (!book) {
       return res.status(404).json({ message: 'Book not found' });
     }
