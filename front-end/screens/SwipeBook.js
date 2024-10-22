@@ -83,6 +83,7 @@ const SwipeBook = (isMuted) => {
   useEffect(() => {
     const fetchBookAndQuizInfo = async () => {
       try {
+        console.log(`${BASE_API_URL}/books/${bookId}`)
         const [bookResponse, quizResponse] = await Promise.all([
           axios.get(`${BASE_API_URL}/books/${bookId}`),
           axios.get(`${BASE_API_URL}/questions/${bookId}`),
