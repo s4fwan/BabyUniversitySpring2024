@@ -6,6 +6,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@dotlottie/react-player": "^1.6.19",
     "@expo-google-fonts/itim": "^0.2.3",
     "@expo/config": "~9.0.0",
     "@expo/metro-config": "~0.18.11",
