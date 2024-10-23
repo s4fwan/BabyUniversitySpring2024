@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   },
 
   bookshelfHeaderText: {
-    fontFamily: "Mclaren",
+    fontFamily: "McLaren",
     color: "#FFF",
     fontSize: 45,
   },

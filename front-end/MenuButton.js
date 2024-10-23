@@ -9,6 +9,8 @@ import kidIcon from './assets/menuImages/kidIcon.png';
 import logoutIcon from './assets/menuImages/logoutIcon.png';
 import toggleButtonIcon from './assets/menuImages/toggleButton.png';
 import parentsIcon from './assets/menuImages/parents.png';
+import changePin from "./assets/menuImages/changePin.png";
+import backToParentsIcon from "./assets/menuImages/backToParentsIcon.png";
 
 
 const MenuButton = ({ userMode, onOptionPress }) => {
@@ -70,10 +72,10 @@ const MenuButton = ({ userMode, onOptionPress }) => {
   // Options for parents mode
   const parentOptions = [
     { label: 'UserName', image: userIcon },
+    { label: 'Back to Parents Page', image: backToParentsIcon },
     { label: 'Settings', image: settingsIcon },
-    { label: 'Parents Mode', image: parentsIcon },
-    {label: 'Change Pin',image: parentsIcon},
-    {label: 'Logout',image: parentsIcon}
+    {label: 'Change Pin',image: changePin},
+    {label: 'Logout',image: logoutIcon}
   ];
 
   // Options for kids mode
