@@ -31,16 +31,16 @@ const SignupScreen = () => {
   const handleSignup = async () => {
     const newErrors = {};
 
-    if (!email) newErrors.email = "Please enter your email.";
-    else if (!validateEmail(email)) newErrors.email = "Invalid email format.";
+    if (!email) newErrors.email = "Enter a valid email";
+    else if (!validateEmail(email)) newErrors.email = "Enter a valid email";
 
-    if (!name) newErrors.name = "Please enter your name.";
+    if (!name) newErrors.name = "Enter a valid name";
     else if (!validateName(name))
-      newErrors.name = "Name must only contain letters.";
+      newErrors.name = "Enter a valid name";
 
-    if (!pin) newErrors.pin = "Please enter a four-digit pin.";
+    if (!pin) newErrors.pin = "Enter a valid pin";
     else if (!validatePin(pin))
-      newErrors.pin = "Please enter a valid four-digit pin.";
+      newErrors.pin = "Enter a valid pin";
 
     setErrors(newErrors);
     console.log(newErrors);
@@ -56,6 +56,10 @@ const SignupScreen = () => {
         setErrors({ general: error.message });
       }
     }
+  };
+
+  const handleSignin = () => {
+    navigation.navigate("Login");
   };
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -77,10 +81,11 @@ const SignupScreen = () => {
                 value={email}
                 onChangeText={(text) => setEmail(text)}
               />
+              
+              {errors.email && (
+                <Text style={styles.errorText}>{errors.email}</Text>
+              )}
             </View>
-            {errors.email && (
-              <Text style={styles.errorText}>{errors.email}</Text>
-            )}
           </View>
           <View style={styles.inputRow}>
             <View style={styles.labelWrap}>
@@ -89,16 +94,18 @@ const SignupScreen = () => {
             <View style={styles.inputWrap}>
               <TextInput
                 style={styles.input}
-                placeholder="Enter your first name"
+                placeholder="Enter your name"
                 value={name}
                 onChangeText={(text) => setName(text)}
               />
+              {errors.name && (
+                <Text style={styles.errorText}>{errors.name}</Text>
+              )}
             </View>
-            {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
           </View>
           <View style={styles.inputRow}>
             <View style={styles.labelWrap}>
-              <Text style={styles.label}>Pin:</Text>
+              <Text style={styles.label}>Create Pin:</Text>
             </View>
             <View style={styles.inputWrap}>
               <TextInput
@@ -108,8 +115,8 @@ const SignupScreen = () => {
                 value={pin}
                 onChangeText={(text) => setPin(text)}
               />
+              {errors.pin && <Text style={styles.errorText}>{errors.pin}</Text>}
             </View>
-            {errors.pin && <Text style={styles.errorText}>{errors.pin}</Text>}
           </View>
         </View>
         <View style={styles.buttonContainer}>
@@ -120,6 +127,12 @@ const SignupScreen = () => {
         {errors.general && (
           <Text style={styles.errorText}>{errors.general}</Text>
         )}
+        <View style={styles.signInWrap}>
+          <Text style={styles.signInText}>Already have an account?</Text>
+          <TouchableOpacity onPress={handleSignin}>
+            <Text style={styles.signInLink}>Sign In</Text>
+          </TouchableOpacity>
+        </View>
         <Image source={intersect} style={styles.backgroundImage} />
       </KeyboardAvoidingView>
     </ScrollView>
@@ -237,10 +250,35 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   errorText: {
+    position: "absolute",
+    right: -150,
+    fontSize: 18,
     color: "red",
-    marginTop: 5,
+    fontWeight: "bold",
+    textAlign:"left",
+  },
+  backgroundImage: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: -1,
+  },
+  signInWrap: {
+    marginTop: 20,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  signInText: {
+    color: "835717",
+    fontSize: 20,
+  },
+  signInLink: {
+    color: "#835717",
     marginLeft: 10,
-    fontSize: 12,
+    fontWeight: "bold",
+    fontSize: 20,
   },
 });
 export default SignupScreen;
