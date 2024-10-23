@@ -5,7 +5,7 @@ import LottieView from "lottie-react-native";
 import BackButton from "../BookPages/BackButton";
 import { Audio } from 'expo-av';
 
-const BookPage = ({ page, isActive }) => {
+const BookPage = ({ page, isActive, currentMode }) => {
   const soundRef = useRef(null);
   const imageAnimationRef = useRef(null);
   const highlightTextRef = useRef(null);
@@ -80,7 +80,7 @@ const BookPage = ({ page, isActive }) => {
 
   return (
     <View style={styles.container}>
-      <BackButton />
+      <BackButton currentMode={currentMode} />
       <TouchableOpacity onPress={handlePress}>
         <LottieView
           ref={imageAnimationRef}

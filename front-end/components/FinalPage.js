@@ -1,11 +1,11 @@
 import React, { useRef, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import ParentUI from "../ParentUI/ParentUI";
+import ParentUI from "../screens/ParentUI";
 import picture from "../picture.png";
 import BackButton from "../BookPages/BackButton";
 import { Audio } from "expo-av";
 
-const FinalPage = ({ isActive }) => {
+const FinalPage = ({ isActive, currentMode }) => {
   const soundRef = useRef(null);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const FinalPage = ({ isActive }) => {
   }, [isActive]);
   return (
     <View style={styles.container}>
-      <BackButton />
+      <BackButton currentMode={currentMode}/>
       <Image source={picture} style={styles.pictureImg} />
       <View style={styles.bodyText}>
         <Text style={styles.text}>Now you are a quantum physicist.</Text>

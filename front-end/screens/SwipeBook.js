@@ -27,8 +27,10 @@ const SwipeBook = (isMuted) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [timerId, setTimerId] = useState(null);
   const route = useRoute();
-  const { bookId } = route.params;
+  const { bookId, currentMode } = route.params;
   const [bookPages, setBookPages] = useState([]);
+  const [userId, setUserId] = useState("");
+  const [bookData, setBookData] = useState([]);
 
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const audioPaths = {
@@ -83,7 +85,7 @@ const SwipeBook = (isMuted) => {
   useEffect(() => {
     const fetchBookAndQuizInfo = async () => {
       try {
-        console.log(`${BASE_API_URL}/books/${bookId}`)
+        const userId = await AsyncStorage.getItem("userId");
         const [bookResponse, quizResponse] = await Promise.all([
           axios.get(`${BASE_API_URL}/books/${bookId}`),
           axios.get(`${BASE_API_URL}/questions/${bookId}`),
@@ -91,29 +93,23 @@ const SwipeBook = (isMuted) => {
         const bookData = bookResponse.data.pages.map((page, index) => ({
           key: `bookPage${index}`,
           page,
+          currentMode
         }));
       
-        // const quizData = quizResponse.data.map((question, index) => ({
-        //   key: `quizPage${index}`,
-        //   component: <QuizPage quiz={question} />,
-        // }));
-        // const finalPage = {
-        //   key: "finalPage",
-        //   component: <FinalPage />,
-        // };
-        // const coverPage = {
-        //   key: "coverPage",
-        //   component: <CoverPage />,
-        // };
         const quizData = quizResponse.data.map((question, index) => ({
           key: `quizPage${index}`,
-          quiz: question,  
+          quiz: question,
+          bookId:bookId,  
+          currentMode,
+          userId:userId
         }));
         const finalPage = {
           key: "finalPage",
+          currentMode
         };
         const coverPage = {
           key: "coverPage",
+          currentMode
         };
         const combinedData = [coverPage,...bookData, ...quizData, finalPage];
 
@@ -133,8 +129,8 @@ const SwipeBook = (isMuted) => {
       try {
         await AsyncStorage.setItem("bookId", bookId);
         const userId = await AsyncStorage.getItem("userId");
-        const response = await axios.get(
-          `${BASE_API_URL}/tracker-books/current-page/${userId}/${bookId}`
+        const response = await axios.post(
+          `${BASE_API_URL}/tracker-books`,{userId,bookId}
         );
         setCurrentPage(response.data.currentPage);
         carouselRef.current.scrollTo({
@@ -148,7 +144,7 @@ const SwipeBook = (isMuted) => {
     if (bookId) {
       fetchCurrentPage();
     }
-  }, [bookPages]);
+  }, [bookPages,currentMode]);
 
   useEffect(() => {
     return sound
@@ -158,9 +154,6 @@ const SwipeBook = (isMuted) => {
       : undefined;
   }, [sound]);
 
-  // const renderItem = ({ item }) => (
-  //   <View style={styles.pageContainer}>{item.component}</View>
-  // );
   async function playSwipeSound() {
     const { sound } = await Audio.Sound.createAsync(
       require("../assets/booksSFX/PageSwipe_SoundEffect.mp3")
@@ -200,37 +193,14 @@ const SwipeBook = (isMuted) => {
     }, 1000);
     setTimerId(newTimerId);
   };
-
   return (
     <View style={styles.container}>
-      {/* <Carousel
-        ref={carouselRef}
-        data={bookPages}
-        width={screenHeight}
-        height={screenWidth}
-        renderItem={renderItem}
-        onSnapToItem={handlePageChange}
-        onScrollEnd={() => playSwipeSound()}
-      /> */}
       <Carousel
       ref={carouselRef}
       data={bookPages}
       width={screenHeight}
       height={screenWidth}
       renderItem={({ item, index }) => {
-        // if (item.page) {
-        //   return (
-        //     <BookPage
-        //       page={item.page}
-        //       ref={(el) => (pageRefs.current[index] = el)} 
-        //       isActive={currentPage-1 === index}
-        //     />
-        //   );
-        // }
-        // if (item.component) {
-        //   return item.component;
-        // }
-        // return null;
         const isActive = currentPage - 1 === index;
         if (item.page) {
           return (
@@ -246,6 +216,8 @@ const SwipeBook = (isMuted) => {
           return (
             <QuizPage
               quiz={item.quiz}
+              userId={item.userId}
+              currentMode={item.currentMode}
               ref={(el) => (pageRefs.current[index] = el)} 
               isActive={isActive}
             />
@@ -257,6 +229,7 @@ const SwipeBook = (isMuted) => {
             <FinalPage
               ref={(el) => (pageRefs.current[index] = el)} 
               isActive={isActive}
+              currentMode={item.currentMode}
             />
           );
         }
@@ -266,6 +239,7 @@ const SwipeBook = (isMuted) => {
             <CoverPage
               ref={(el) => (pageRefs.current[index] = el)} 
               isActive={isActive}
+              currentMode={item.currentMode}
             />
           );
         }

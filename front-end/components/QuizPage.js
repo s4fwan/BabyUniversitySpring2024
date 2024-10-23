@@ -8,8 +8,10 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import axios from "axios";
 
-const QuizPage = ({ quiz }) => {
+const QuizPage = ({ quiz, currentMode, userId }) => {
+  console.log(quiz);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [submitted, setSubmitted] = useState(false);
 
@@ -23,14 +25,19 @@ const QuizPage = ({ quiz }) => {
       return;
     }
     setSubmitted(true);
+    console.log(`http://localhost:4000/api/v1/tracker-books/update-quiz`);
     const message =
       selectedAnswer === quiz.correctAnswer ? "Correct!" : "Wrong!";
+    const response = await axios.put(
+      `http://localhost:4000/api/v1/tracker-books/update-quiz`,
+      { userId, bookId: quiz.bookId, quizId: quiz._id, selectedAnswer }
+    );
     Alert.alert(message);
   };
 
   return (
     <View style={styles.container}>
-      <BackButton />
+      <BackButton currentMode={currentMode} />
       <Text style={styles.questionText}>{quiz.description}</Text>
       <View style={styles.answerContainer}>
         {quiz.answers.map((answer, index) => {

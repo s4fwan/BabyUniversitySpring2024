@@ -5,7 +5,7 @@ import CoverImage from "../assets/svg/coverImage.svg";
 import { useFonts } from "expo-font";
 import { Audio } from 'expo-av';
 
-const CoverPage = ({ isActive }) => {
+const CoverPage = ({ isActive, currentMode }) => {
   const [fontsLoaded] = useFonts({
     "KulimPark-Bold": require("../assets/fonts/KulimPark-Bold.ttf"),
   });
@@ -52,7 +52,7 @@ const CoverPage = ({ isActive }) => {
 
   return (
     <View style={styles.container}>
-      <BackButton />
+      <BackButton currentMode={currentMode} />
       <SafeAreaView style={styles.container}>
         <View style={styles.purpleColumn}></View>
         <View style={styles.yellowColumn}></View>

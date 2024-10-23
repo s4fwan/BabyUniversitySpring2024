@@ -21,31 +21,29 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [pin, setPin] = useState("");
   const [isLoginClicked, setIsLoginClicked] = useState(false);
-
   const navigation = useNavigation();
 
-  useEffect(() => {
-    const checkLogin = async () => {
-      try {
-        const userId = await AsyncStorage.getItem("userId");
-        if (userId) {
-          navigation.navigate("Bedroom");
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    };
+  const [loaded] = Font.useFonts({
+    McLaren : require("../assets/fonts/McLaren.ttf"),
+  })
 
-    checkLogin();
-  }, []);
+  if(!loaded){
+    return null;
+  }
 
   // useEffect(() => {
-  //     const unsubscribe = auth.onAuthStateChanged(user => {
-  //         if (user) {
-  //             navigation.navigate("Bedroom");
-  //         }
-  //     });
-  //     return unsubscribe;
+  //   const checkLogin = async () => {
+  //     try {
+  //       const userId = await AsyncStorage.getItem("userId");
+  //       if (userId) {
+  //         navigation.navigate("Bedroom",{currentMode: "kids"});
+  //       }
+  //     } catch (e) {
+  //       console.log(e);
+  //     }
+  //   };
+
+  //   checkLogin();
   // }, []);
 
   const handleSignup = () => {
@@ -53,13 +51,8 @@ const LoginScreen = () => {
   };
 
   const handleLogin = () => {
-    // if (email.toLocaleLowerCase() == "baby@email.com" && pin == "1234") {
-    //   AsyncStorage.setItem("userId", "670a4e9d54909cf6f8131f7f");
-    //   navigation.navigate("Bedroom");
-    //   return;
-    // }
+
     console.log(`${BASE_API_URL}/users/sign-in`);
-    email = email.toLocaleLowerCase();
     setIsLoginClicked(true);
     axios
       .post(`${BASE_API_URL}/users/sign-in`, { email, pin })
@@ -67,7 +60,7 @@ const LoginScreen = () => {
         if (response.status === 200) {
           AsyncStorage.setItem("userId", response.data.userId);
           console.log("Logged in with user", response.data.userEmail);
-          navigation.navigate("Bedroom");
+          navigation.navigate("Bedroom", { currentMode: "kids" });
         } else {
           alert(response.data.message);
         }
@@ -85,7 +78,7 @@ const LoginScreen = () => {
         <UIBallAnimation />
       </View> */}
       <Image source={require("../assets/img/logo.png")} style={styles.logo} />
-      
+
       <View style={styles.titleWrap}>
         <Text style={styles.titleStroke}>Baby University</Text>
         <Text style={styles.title}>Baby University</Text>
@@ -116,10 +109,19 @@ const LoginScreen = () => {
               secureTextEntry
               value={pin}
               onChangeText={(text) => setPin(text)}
-            />   
-            <Text style={{position:"absolute",right:-120,fontSize:24,color:"#835717",fontWeight:"bold"}}>Forgot Pin</Text>        
+            />
+            <Text
+              style={{
+                position: "absolute",
+                right: -120,
+                fontSize: 24,
+                color: "#835717",
+                fontWeight: "bold",
+              }}
+            >
+              Forgot Pin
+            </Text>
           </View>
-          
         </View>
       </View>
       <View style={styles.buttonContainer}>
@@ -200,8 +202,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignContent: "center",
     marginTop: 20,
-    marginHorizontal:"auto",   
-    transform: [{translateX: -30}],
+    marginHorizontal: "auto",
+    transform: [{ translateX: -30 }],
   },
   label: {
     marginRight: 10,
@@ -227,7 +229,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#AD620E",
-    flexShrink:1,
+    flexShrink: 1,
     paddingVertical: 10,
     paddingHorizontal: 100,
     borderRadius: 20,
@@ -246,24 +248,22 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: -1,
   },
-  signUpWrap:{
+  signUpWrap: {
     marginTop: 20,
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    
   },
   signUpText: {
-    color:"835717",
+    color: "835717",
     fontSize: 20,
   },
   signUpLink: {
-    color:"#835717",
+    color: "#835717",
     marginLeft: 10,
     fontWeight: "bold",
     fontSize: 20,
   },
-
 });
 
 export default LoginScreen;

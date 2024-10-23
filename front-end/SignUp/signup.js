@@ -51,7 +51,7 @@ const SignupScreen = () => {
         console.log(requestBody);
         const response = await axios.post(requestUrl, requestBody);
         await AsyncStorage.setItem("userId", response.data.userId);
-        navigation.replace("Bedroom");
+        navigation.replace("Bedroom",{currentMode: "kids"});
       } catch (error) {
         setErrors({ general: error.message });
       }
@@ -250,12 +250,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   errorText: {
+    // backgroundColor:"red",
     position: "absolute",
-    right: -150,
+    // right: -170,
+    left:310,
     fontSize: 18,
     color: "red",
     fontWeight: "bold",
-    textAlign:"left",
+    // textAlign:"left",
   },
   backgroundImage: {
     position: "absolute",
@@ -282,3 +284,5 @@ const styles = StyleSheet.create({
   },
 });
 export default SignupScreen;
+
+//BASE_API_URL=https://shrouded-depths-36068-b1b61255eb07.herokuapp.com/api/v1

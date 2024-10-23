@@ -15,12 +15,14 @@ import MenuButton from "../MenuButton";
 import LogoutSuccessful from "../Logout Page";
 import { useFonts, Itim_400Regular } from "@expo-google-fonts/itim";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRoute } from '@react-navigation/native';
 
 const BedRoomScreen = ({ navigation }) => {
-  let [fontsLoaded] = useFonts({ Itim_400Regular });
+  const route = useRoute(); 
 
+  const { currentMode } = route.params;
   const openBook = (bookId) => {
-    navigation.navigate("SwipeBook", { bookId });
+    navigation.navigate("SwipeBook", { bookId ,currentMode});
   };
 
   const handleLogout =  async () => {
@@ -41,7 +43,7 @@ const BedRoomScreen = ({ navigation }) => {
         source={require("../assets/bedRoomImages/background_doodle.png")}
         style={styles.background}
       />
-      <MenuButton userMode="parents" />
+      <MenuButton userMode={currentMode} isBrowsingBook={true}/>
       {/* header text title */}
       <View style={styles.headerTextContainer}>
         <Text style={styles.bedroomTitle}>Bookshelf</Text>
