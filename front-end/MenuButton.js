@@ -19,6 +19,17 @@ const MenuButton = ({ userMode, onOptionPress }) => {
     setIsOpen(!isOpen);
   };
 
+  const handleLogout =  async () => {
+    try {
+      await AsyncStorage.removeItem("userId");
+      console.log("Logged out");
+      navigation.navigate("Logout");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred while logging out");
+    }
+  };
+
   const handleOptionClick = (option) => {
     if (userMode === 'parents') {
       if (option === 'Parents Mode') {
@@ -31,6 +42,8 @@ const MenuButton = ({ userMode, onOptionPress }) => {
       }else if (option === 'Change Pin') {
         console.log(option);
         navigation.navigate('ChangePin');
+      }else if (option === "Logout") {
+        handleLogout();
       }
     } else {
       if (option === 'Switch to Kids mode') {
@@ -59,7 +72,8 @@ const MenuButton = ({ userMode, onOptionPress }) => {
     { label: 'UserName', image: userIcon },
     { label: 'Settings', image: settingsIcon },
     { label: 'Parents Mode', image: parentsIcon },
-    {label: 'Change Pin',image: parentsIcon}
+    {label: 'Change Pin',image: parentsIcon},
+    {label: 'Logout',image: parentsIcon}
   ];
 
   // Options for kids mode
@@ -108,15 +122,16 @@ const styles = StyleSheet.create({
   toggleButton: {
     backgroundColor: 'transparent',
     borderRadius: 5,
-    color: '#898A8D',
+    color: '#D17E21',
   },
   toggleImage: {
     width: 41,
     height: 31,
+    overflow: "visible",
   },
   optionsContainer: {
     marginTop: 5,
-    backgroundColor: 'lightgray',
+    backgroundColor: '#E2B27F',
     borderRadius: 15,
     marginLeft: 25,
   },
@@ -126,7 +141,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 10,
     borderBottomWidth: 1,
-    borderBottomColor: 'gray',
+    borderBottomColor: '#232323',
     paddingRight: 60,
   },
   imageContainer: {

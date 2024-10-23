@@ -215,8 +215,8 @@ const SwipeBook = (isMuted) => {
       <Carousel
       ref={carouselRef}
       data={bookPages}
-      width={screenHeight}
-      height={screenWidth}
+      width={screenWidth}
+      height={screenHeight}
       renderItem={({ item, index }) => {
         // if (item.page) {
         //   return (
