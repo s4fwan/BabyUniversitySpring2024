@@ -24,34 +24,31 @@ const LoginScreen = () => {
   const navigation = useNavigation();
 
   const [loaded] = Font.useFonts({
-    McLaren : require("../assets/fonts/McLaren.ttf"),
-  })
-
-  if(!loaded){
+    McLaren: require("../assets/fonts/McLaren.ttf"),
+  });
+ 
+  useEffect(() => {
+    const checkLogin = async () => {
+      try {
+        const userId = await AsyncStorage.getItem("userId");
+        if (userId) {
+          navigation.navigate("Bedroom", { currentMode: "kids" });
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+   
+    checkLogin();
+  }, []);
+  if (!loaded) {
     return null;
   }
-
-  // useEffect(() => {
-  //   const checkLogin = async () => {
-  //     try {
-  //       const userId = await AsyncStorage.getItem("userId");
-  //       if (userId) {
-  //         navigation.navigate("Bedroom",{currentMode: "kids"});
-  //       }
-  //     } catch (e) {
-  //       console.log(e);
-  //     }
-  //   };
-
-  //   checkLogin();
-  // }, []);
-
   const handleSignup = () => {
     navigation.navigate("SignUp");
   };
 
   const handleLogin = () => {
-
     console.log(`${BASE_API_URL}/users/sign-in`);
     setIsLoginClicked(true);
     axios

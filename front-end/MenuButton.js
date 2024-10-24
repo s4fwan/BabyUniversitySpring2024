@@ -127,6 +127,7 @@ const styles = StyleSheet.create({
   toggleImage: {
     width: 41,
     height: 31,
+    overflow: "visible",
   },
   optionsContainer: {
     marginTop: 5,

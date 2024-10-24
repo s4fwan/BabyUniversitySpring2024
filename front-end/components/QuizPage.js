@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import BackButton from "../BookPages/BackButton";
 import {
   View,
@@ -8,15 +8,65 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { Audio } from "expo-av";
+
+
 import axios from "axios";
 
-const QuizPage = ({ quiz, currentMode, userId }) => {
-  console.log(quiz);
+const QuizPage = ({
+  quiz,
+  currentMode,
+  userId,
+  goToNextPage,
+  index,
+  length,
+}) => {
+  const soundRef = useRef(null);
+
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [submitted, setSubmitted] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const navigation = useNavigation();
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
 
   const handleAnswerSelect = (index) => {
     setSelectedAnswer(index);
+  };
+
+  useEffect(() => {
+    async function loadSound() {
+      try {
+        const { sound } = await Audio.Sound.createAsync({
+          uri: quiz.sound,
+        });
+        soundRef.current = sound;
+        console.log("Sound loaded successfully");
+      } catch (error) {
+        console.log("Failed to load sound:", error);
+      }
+    }
+  
+    loadSound();
+    
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.unloadAsync(); 
+      }
+    };
+  }, []);
+
+  const handlePress = () => {
+    if (soundRef.current) {
+      soundRef.current.setPositionAsync(0);
+      soundRef.current.playAsync();
+    }else{
+      console.log("soundRef is not loaded");
+    }
   };
 
   const handleSubmit = async () => {
@@ -26,36 +76,85 @@ const QuizPage = ({ quiz, currentMode, userId }) => {
     }
     setSubmitted(true);
     console.log(`http://localhost:4000/api/v1/tracker-books/update-quiz`);
-    const message =
+    const result =
       selectedAnswer === quiz.correctAnswer ? "Correct!" : "Wrong!";
+    setMessage(result);
     const response = await axios.put(
       `http://localhost:4000/api/v1/tracker-books/update-quiz`,
       { userId, bookId: quiz.bookId, quizId: quiz._id, selectedAnswer }
     );
-    Alert.alert(message);
   };
 
   return (
     <View style={styles.container}>
-      <BackButton currentMode={currentMode} />
-      <Text style={styles.questionText}>{quiz.description}</Text>
+      <TouchableOpacity style={styles.BackButton} onPress={handleGoBack}>
+        <Image source={require("../assets/img/back.png")} />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.progress}>
+        <Text style={styles.progressText}>
+          {index + 1}/{length}
+        </Text>
+      </TouchableOpacity>
+      <View style={styles.personWrap}></View>
+      <Image
+        source={require("../assets/quizImages/person.png")}
+        style={styles.personImage}
+      />
+
+      <View style={styles.questionWrap}>
+        <TouchableOpacity style={{marginRight:20,width:50,height:"100%",alignItems:"center"}} onPress={handlePress}>
+          <Image source={require("../assets/quizImages/sound.png")} />
+        </TouchableOpacity>
+        <Text style={styles.questionText}>{quiz.description}</Text>
+      </View>
+
+      {!submitted ? (
+        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>Submit</Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={
+            message === "Correct!"
+              ? styles.nextCorrectButton
+              : styles.nextWrongButton
+          }
+          onPress={goToNextPage}
+        >
+          <Text style={styles.submitButtonText}>Next</Text>
+        </TouchableOpacity>
+      )}
+      {submitted && (
+        <TouchableOpacity style={styles.messageWrap}>
+          <Text
+            style={{
+              fontSize: 40,
+              color: message === "Correct!" ? "green" : "red",
+              fontWeight: "bold",
+            }}
+          >
+            {message}
+          </Text>
+        </TouchableOpacity>
+      )}
       <View style={styles.answerContainer}>
         {quiz.answers.map((answer, index) => {
           let answerStyle = styles.answerButton;
+
           if (submitted) {
             if (index === quiz.correctAnswer) {
-              answerStyle = { ...styles.answerButton, ...styles.correctAnswer };
+              answerStyle = styles.correctAnswer;
             } else if (index === selectedAnswer) {
-              answerStyle = { ...styles.answerButton, ...styles.wrongAnswer };
+              answerStyle = styles.wrongAnswer;
             }
+          } else if (index === selectedAnswer) {
+            answerStyle = { ...styles.answerButton, ...styles.selectedAnswer };
           }
+
           return (
             <TouchableOpacity
               key={index}
-              style={[
-                answerStyle,
-                selectedAnswer === index ? styles.selectedAnswer : null,
-              ]}
+              style={answerStyle}
               onPress={() => handleAnswerSelect(index)}
               disabled={submitted}
             >
@@ -69,11 +168,6 @@ const QuizPage = ({ quiz, currentMode, userId }) => {
           );
         })}
       </View>
-      {!submitted && (
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Submit</Text>
-        </TouchableOpacity>
-      )}
     </View>
   );
 };
@@ -82,43 +176,112 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
+    // justifyContent: "center",
     position: "relative",
     backgroundColor: "#f3f4f5",
     width: "100%",
     height: "100%",
   },
+  message: {
+    color: "red",
+    fontSize: 20,
+  },
+  messageWrap: {
+    width: "100%",
+    marginTop: 30,
+    alignItems: "center",
+  },
+  progress: {
+    position: "absolute",
+    top: 40,
+    right: 40,
+
+  },
+  progressText:{
+    fontSize: 40,
+    fontWeight: "bold",
+    color:"orange"
+  },
+  BackButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    width: 50,
+    height: 50,
+  },
+  personWrap: {
+    position: "absolute",
+    top: 100,
+    left: 100,
+    width: 280,
+    height: 280,
+    zIndex: 1,
+    borderRadius: 280 / 2,
+    borderColor: "orange",
+    borderWidth: 5,
+  },
+  personImage: {
+    position: "absolute",
+    top: 20,
+    left: 130,
+    zIndex: 1,
+  },
+  questionWrap: {
+    alignItems: "center",
+    flexDirection: "row",
+    marginTop: 150,
+    marginBottom: 20,
+    paddingHorizontal: 60,
+    paddingVertical: 30,
+    backgroundColor: "#F3A04C",
+    borderRadius: 10,
+    zIndex:2,
+  },
   questionText: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
     textAlign: "center",
   },
   answerContainer: {
+    marginTop: 60,
+    width: "100%",
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
   },
   answerButton: {
     margin: 10,
     borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#ddd",
+    borderColor: "orange", // Mặc định là orange
+    borderWidth: 10,
     padding: 10,
     alignItems: "center",
     justifyContent: "center",
     position: "relative",
   },
   selectedAnswer: {
-    borderColor: "blue",
+    borderColor: "#5295FA", // Khi được chọn, màu viền là xanh dương
+    borderWidth: 10,
   },
   correctAnswer: {
+    margin: 10,
+    borderRadius: 10,
     borderColor: "green",
-    backgroundColor: "#d4edda",
+    borderWidth: 10,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
   },
   wrongAnswer: {
+    margin: 10,
+    borderRadius: 10,
     borderColor: "red",
-    backgroundColor: "#f8d7da",
+    borderWidth: 10,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
   },
   answerImage: {
     width: 200,
@@ -140,14 +303,42 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: 20,
-    padding: 15,
-    backgroundColor: "#007bff",
+    paddingHorizontal: 40,
+    paddingVertical: 20,
+    backgroundColor: "#F7D553",
     borderRadius: 10,
   },
+  nextCorrectButton: {
+    marginTop: 20,
+    paddingHorizontal: 40,
+    paddingVertical: 20,
+    backgroundColor: "green",
+    borderRadius: 10,
+  },
+  nextWrongButton: {
+    marginTop: 20,
+    paddingHorizontal: 40,
+    paddingVertical: 20,
+    backgroundColor: "red",
+    borderRadius: 10,
+  },
+
   submitButtonText: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 35,
     fontWeight: "bold",
+  },
+  nextButton: {
+    color: "#85CA66",
+    fontSize: 35,
+    fontWeight: "bold",
+  },
+  backgroundImage: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: -1,
   },
 });
 

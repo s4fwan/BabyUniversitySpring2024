@@ -17,6 +17,7 @@ import FinalPage from "../components/FinalPage";
 import CoverPage from "../components/CoverPage";
 import BookPage from "../components/BookPage";
 import QuizPage from "../components/QuizPage";
+import QuizStartPage from "../components/QuizStartPage";
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const SwipeBook = (isMuted) => {
@@ -29,8 +30,7 @@ const SwipeBook = (isMuted) => {
   const route = useRoute();
   const { bookId, currentMode } = route.params;
   const [bookPages, setBookPages] = useState([]);
-  const [userId, setUserId] = useState("");
-  const [bookData, setBookData] = useState([]);
+
 
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const audioPaths = {
@@ -95,13 +95,15 @@ const SwipeBook = (isMuted) => {
           page,
           currentMode
         }));
-      
+        console.log(quizResponse.data.length);
         const quizData = quizResponse.data.map((question, index) => ({
           key: `quizPage${index}`,
           quiz: question,
           bookId:bookId,  
           currentMode,
-          userId:userId
+          userId:userId,
+          index:index,
+          length:quizResponse.data.length
         }));
         const finalPage = {
           key: "finalPage",
@@ -111,7 +113,11 @@ const SwipeBook = (isMuted) => {
           key: "coverPage",
           currentMode
         };
-        const combinedData = [coverPage,...bookData, ...quizData, finalPage];
+        const quizStartPage = {
+          key: "quizStartPage",
+          currentMode
+        };
+        const combinedData = [coverPage,...bookData,quizStartPage, ...quizData, finalPage];
 
         setBookPages(combinedData);
       } catch (e) {
@@ -193,6 +199,15 @@ const SwipeBook = (isMuted) => {
     }, 1000);
     setTimerId(newTimerId);
   };
+
+  const handleGoToNextPage = (nextIndex) => {
+    if (carouselRef.current) {
+      setTimeout(() => {
+        carouselRef.current.scrollTo({ index: nextIndex, animated: false });
+      }, 500);  
+      setCurrentPage(nextIndex + 1);
+    }
+  };
   return (
     <View style={styles.container}>
       <Carousel
@@ -220,13 +235,38 @@ const SwipeBook = (isMuted) => {
               currentMode={item.currentMode}
               ref={(el) => (pageRefs.current[index] = el)} 
               isActive={isActive}
+              index={item.index}
+              length={item.length}
+              goToNextPage={() => handleGoToNextPage(index + 1)}
             />
           );
         }
+
+        // {Array.isArray(item.quiz) && item.quiz.map((quizItem, quizIndex) => (
+        //   <QuizPage
+        //     key={quizIndex}
+        //     quiz={quizItem}
+        //     userId={item.userId}
+        //     currentMode={item.currentMode}
+        //     ref={(el) => (pageRefs.current[index] = el)} 
+        //     isActive={isActive}
+        //     goToNextPage={() => handleGoToNextPage(index + 1)}
+        //     quizIndex={quizIndex} 
+        //   />
+        // ))}
     
         if (item.key === "finalPage") {
           return (
             <FinalPage
+              ref={(el) => (pageRefs.current[index] = el)} 
+              isActive={isActive}
+              currentMode={item.currentMode}
+            />
+          );
+        }
+        if(item.key === "quizStartPage"){
+          return (
+            <QuizStartPage
               ref={(el) => (pageRefs.current[index] = el)} 
               isActive={isActive}
               currentMode={item.currentMode}
