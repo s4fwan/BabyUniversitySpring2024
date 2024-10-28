@@ -19,10 +19,10 @@ import BookPage from "../components/BookPage";
 import QuizPage from "../components/QuizPage";
 import QuizStartPage from "../components/QuizStartPage";
 
-const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
+// const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const SwipeBook = (isMuted) => {
   const carouselRef = useRef(null);
-  const pageRefs = useRef([]); 
+  const pageRefs = useRef([]);
   const [sound, setSound] = useState();
   const { readAloudVal } = useReadAloud();
   const [currentPage, setCurrentPage] = useState(0);
@@ -63,8 +63,6 @@ const SwipeBook = (isMuted) => {
     ],
   };
 
-  
-
   async function playBookSound(index) {
     if (readAloudVal) {
       const { sound } = await Audio.Sound.createAsync(
@@ -77,7 +75,10 @@ const SwipeBook = (isMuted) => {
   useEffect(() => {
     if (carouselRef.current) {
       setTimeout(() => {
-        carouselRef.current.scrollTo({ index: currentPage - 1, animated: false });
+        carouselRef.current.scrollTo({
+          index: currentPage - 1,
+          animated: false,
+        });
       }, 100);
     }
   }, [screenWidth]);
@@ -85,6 +86,7 @@ const SwipeBook = (isMuted) => {
   useEffect(() => {
     const fetchBookAndQuizInfo = async () => {
       try {
+        const playQuiz = (await AsyncStorage.getItem("quizVal"))==="true";
         const userId = await AsyncStorage.getItem("userId");
         const [bookResponse, quizResponse] = await Promise.all([
           axios.get(`${BASE_API_URL}/books/${bookId}`),
@@ -93,31 +95,35 @@ const SwipeBook = (isMuted) => {
         const bookData = bookResponse.data.pages.map((page, index) => ({
           key: `bookPage${index}`,
           page,
-          currentMode
+          currentMode,
         }));
-        console.log(quizResponse.data.length);
         const quizData = quizResponse.data.map((question, index) => ({
           key: `quizPage${index}`,
           quiz: question,
-          bookId:bookId,  
+          bookId: bookId,
           currentMode,
-          userId:userId,
-          index:index,
-          length:quizResponse.data.length
+          userId: userId,
+          index: index,
+          length: quizResponse.data.length,
         }));
         const finalPage = {
           key: "finalPage",
-          currentMode
+          currentMode,
         };
         const coverPage = {
           key: "coverPage",
-          currentMode
+          currentMode,
         };
         const quizStartPage = {
           key: "quizStartPage",
-          currentMode
+          currentMode,
         };
-        const combinedData = [coverPage,...bookData,quizStartPage, ...quizData, finalPage];
+        const combinedData = [
+          coverPage,
+          ...bookData,
+          ...(playQuiz === true ? [quizStartPage, ...quizData] : []),
+          finalPage,
+        ];
 
         setBookPages(combinedData);
       } catch (e) {
@@ -135,9 +141,10 @@ const SwipeBook = (isMuted) => {
       try {
         await AsyncStorage.setItem("bookId", bookId);
         const userId = await AsyncStorage.getItem("userId");
-        const response = await axios.post(
-          `${BASE_API_URL}/tracker-books`,{userId,bookId}
-        );
+        const response = await axios.post(`${BASE_API_URL}/tracker-books`, {
+          userId,
+          bookId,
+        });
         setCurrentPage(response.data.currentPage);
         carouselRef.current.scrollTo({
           index: response.data.currentPage - 1,
@@ -150,7 +157,7 @@ const SwipeBook = (isMuted) => {
     if (bookId) {
       fetchCurrentPage();
     }
-  }, [bookPages,currentMode]);
+  }, [bookPages, currentMode]);
 
   useEffect(() => {
     return sound
@@ -189,13 +196,13 @@ const SwipeBook = (isMuted) => {
   };
 
   const handlePageChange = (index) => {
-    setCurrentPage(index+1);
-    playBookSound(index);
+    setCurrentPage(index + 1);
+    // playBookSound(index);
     if (timerId) {
       clearTimeout(timerId);
     }
     const newTimerId = setTimeout(() => {
-      sendCurrentPageToBackend(index+1);
+      sendCurrentPageToBackend(index + 1);
     }, 1000);
     setTimerId(newTimerId);
   };
@@ -204,95 +211,98 @@ const SwipeBook = (isMuted) => {
     if (carouselRef.current) {
       setTimeout(() => {
         carouselRef.current.scrollTo({ index: nextIndex, animated: false });
-      }, 500);  
+      }, 500);
       setCurrentPage(nextIndex + 1);
     }
   };
   return (
     <View style={styles.container}>
       <Carousel
-      ref={carouselRef}
-      data={bookPages}
-      width={screenHeight}
-      height={screenWidth}
-      renderItem={({ item, index }) => {
-        const isActive = currentPage - 1 === index;
-        if (item.page) {
-          return (
-            <BookPage
-              page={item.page}
-              ref={(el) => (pageRefs.current[index] = el)} 
-              isActive={isActive}
-            />
-          );
-        }
-    
-        if (item.quiz) {
-          return (
-            <QuizPage
-              quiz={item.quiz}
-              userId={item.userId}
-              currentMode={item.currentMode}
-              ref={(el) => (pageRefs.current[index] = el)} 
-              isActive={isActive}
-              index={item.index}
-              length={item.length}
-              goToNextPage={() => handleGoToNextPage(index + 1)}
-            />
-          );
-        }
+        ref={carouselRef}
+        data={bookPages}
+        width={screenHeight}
+        height={screenWidth}
+        renderItem={({ item, index }) => {
+          const isActive = currentPage - 1 === index;
+          if (item.page) {
+            return (
+              <BookPage
+                page={item.page}
+                ref={(el) => (pageRefs.current[index] = el)}
+                isActive={isActive}
+              />
+            );
+          }
 
-        // {Array.isArray(item.quiz) && item.quiz.map((quizItem, quizIndex) => (
-        //   <QuizPage
-        //     key={quizIndex}
-        //     quiz={quizItem}
-        //     userId={item.userId}
-        //     currentMode={item.currentMode}
-        //     ref={(el) => (pageRefs.current[index] = el)} 
-        //     isActive={isActive}
-        //     goToNextPage={() => handleGoToNextPage(index + 1)}
-        //     quizIndex={quizIndex} 
-        //   />
-        // ))}
-    
-        if (item.key === "finalPage") {
-          return (
-            <FinalPage
-              ref={(el) => (pageRefs.current[index] = el)} 
-              isActive={isActive}
-              currentMode={item.currentMode}
-            />
-          );
-        }
-        if(item.key === "quizStartPage"){
-          return (
-            <QuizStartPage
-              ref={(el) => (pageRefs.current[index] = el)} 
-              isActive={isActive}
-              currentMode={item.currentMode}
-            />
-          );
-        }
-    
-        if (item.key === "coverPage") {
-          return (
-            <CoverPage
-              ref={(el) => (pageRefs.current[index] = el)} 
-              isActive={isActive}
-              currentMode={item.currentMode}
-            />
-          );
-        }
-      }}
-      onSnapToItem={handlePageChange}
-      onScrollEnd={() => {
-        playSwipeSound();
-        const index = carouselRef.current.currentIndex;
-        if (pageRefs.current[index] && pageRefs.current[index].playAnimation) {
-          pageRefs.current[index].playAnimation();
-        }
-      }}
-    />
+          if (item.quiz) {
+            return (
+              <QuizPage
+                quiz={item.quiz}
+                userId={item.userId}
+                currentMode={item.currentMode}
+                ref={(el) => (pageRefs.current[index] = el)}
+                isActive={isActive}
+                index={item.index}
+                length={item.length}
+                goToNextPage={() => handleGoToNextPage(index + 1)}
+              />
+            );
+          }
+
+          // {Array.isArray(item.quiz) && item.quiz.map((quizItem, quizIndex) => (
+          //   <QuizPage
+          //     key={quizIndex}
+          //     quiz={quizItem}
+          //     userId={item.userId}
+          //     currentMode={item.currentMode}
+          //     ref={(el) => (pageRefs.current[index] = el)}
+          //     isActive={isActive}
+          //     goToNextPage={() => handleGoToNextPage(index + 1)}
+          //     quizIndex={quizIndex}
+          //   />
+          // ))}
+
+          if (item.key === "finalPage") {
+            return (
+              <FinalPage
+                ref={(el) => (pageRefs.current[index] = el)}
+                isActive={isActive}
+                currentMode={item.currentMode}
+              />
+            );
+          }
+          if (item.key === "quizStartPage") {
+            return (
+              <QuizStartPage
+                ref={(el) => (pageRefs.current[index] = el)}
+                isActive={isActive}
+                currentMode={item.currentMode}
+              />
+            );
+          }
+
+          if (item.key === "coverPage") {
+            return (
+              <CoverPage
+                ref={(el) => (pageRefs.current[index] = el)}
+                isActive={isActive}
+                currentMode={item.currentMode}
+              />
+            );
+          }
+        }}
+        onSnapToItem={handlePageChange}
+        onScrollEnd={() => {
+          playSwipeSound();
+          const index = carouselRef.current.currentIndex;
+          if (
+            pageRefs.current[index] &&
+            pageRefs.current[index].playAnimation
+          ) {
+            pageRefs.current[index].playAnimation();
+          }
+        }}
+      />
       <Text style={styles.pageNumber}>Current Page: {currentPage}</Text>
     </View>
   );

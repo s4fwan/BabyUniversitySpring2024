@@ -4,14 +4,13 @@ import {
   Text,
   View,
   TextInput,
-  Button,
+  
   StyleSheet,
   KeyboardAvoidingView,
   TouchableOpacity,
   Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import UIBallAnimation from "../ballAnimation/ballAnimation";
 import axios from "axios";
 import { BASE_API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -48,14 +47,15 @@ const LoginScreen = () => {
     navigation.navigate("SignUp");
   };
 
-  const handleLogin = () => {
+  const handleLogin =  () => {
     console.log(`${BASE_API_URL}/users/sign-in`);
     setIsLoginClicked(true);
     axios
       .post(`${BASE_API_URL}/users/sign-in`, { email, pin })
-      .then((response) => {
+      .then(async (response) => {
         if (response.status === 200) {
-          AsyncStorage.setItem("userId", response.data.userId);
+          await AsyncStorage.setItem("userId", response.data.userId);
+          await AsyncStorage.setItem("username", response.data.username);
           console.log("Logged in with user", response.data.userEmail);
           navigation.navigate("Bedroom", { currentMode: "kids" });
         } else {
@@ -107,6 +107,7 @@ const LoginScreen = () => {
               value={pin}
               onChangeText={(text) => setPin(text)}
             />
+            <TouchableOpacity onPress={()=>navigation.navigate("ForgotPin")}>
             <Text
               style={{
                 position: "absolute",
@@ -118,6 +119,7 @@ const LoginScreen = () => {
             >
               Forgot Pin
             </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -129,9 +131,6 @@ const LoginScreen = () => {
         >
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-        {/* <TouchableOpacity onPress={handleSignup} style={styles.button}>
-          <Text style={styles.buttonText}>Create Account</Text>
-        </TouchableOpacity> */}
       </View>
       <View style={styles.signUpWrap}>
         <Text style={styles.signUpText}>Don't have an account?</Text>

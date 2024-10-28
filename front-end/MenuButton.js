@@ -8,20 +8,34 @@ import settingsIcon from "./assets/menuImages/settings.png";
 import kidIcon from "./assets/menuImages/kidIcon.png";
 import logoutIcon from "./assets/menuImages/logoutIcon.png";
 import toggleButtonIcon from "./assets/menuImages/toggleButton.png";
+import ChangePin from "./assets/menuImages/changePin.png";
 import parentsIcon from "./assets/menuImages/parents.png";
 import BackIcon from "./assets/menuImages/BackIcon.png";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MenuButton = ({ userMode, isBrowsingBook }) => {
   const [isOpen, setIsOpen] = useState(false);
   const navigation = useNavigation();
-  // const [currentMode, setCurrentMode] = useState("kids");
+  const [name, setName] = useState("UserName");
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
+  useEffect(() => {
+    async function getName() {
+      try {
+        const username = await AsyncStorage.getItem("username");
+        console.log(username);
+        setName(username);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    getName();
+  }, []);
 
-  const handleOptionClick = (option) => {
+  const handleOptionClick = async (option) => {
     if (userMode === "parents") {
       if (option === "Switch to Kids mode") {
         navigation.navigate("Bedroom", { currentMode: "kids" });
@@ -43,8 +57,8 @@ const MenuButton = ({ userMode, isBrowsingBook }) => {
         console.log(option);
         navigation.navigate("Settings");
       } else if (option === "Logout") {
-        console.log(option);
-        navigation.navigate("Logout");
+        await AsyncStorage.clear();
+        navigation.navigate("Login");
       }
       if (option === "UserName") {
         console.log(option);
@@ -61,7 +75,7 @@ const MenuButton = ({ userMode, isBrowsingBook }) => {
   //   {label: 'Change Pin',image: parentsIcon}
   // ];
   const parentOptions = [
-    { label: "UserName", image: userIcon },
+    { label:  name , image: userIcon },
     {
       label:
         isBrowsingBook && userMode === "parents"
@@ -70,12 +84,12 @@ const MenuButton = ({ userMode, isBrowsingBook }) => {
       image: isBrowsingBook && userMode === "parents" ? BackIcon : kidIcon,
     },
     { label: "Settings", image: settingsIcon },
-    { label: "Change Pin", image: parentsIcon },
+    { label: "Change Pin", image: ChangePin },
   ];
 
   // Options for kids mode
   const kidsOptions = [
-    { label: "UserName", image: userIcon },
+    { label: name, image: userIcon },
     { label: "Switch to Parents mode", image: parentsIcon },
     { label: "Settings", image: settingsIcon },
     { label: "Logout", image: logoutIcon },

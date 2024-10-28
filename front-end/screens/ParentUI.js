@@ -21,9 +21,7 @@ const PinEntryScreen = ({ navigation }) => {
   if (!fontsLoaded) {
     return <Text>Loading...</Text>;
   }
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
+
 
   return (
     <View style={styles.container}>
@@ -36,7 +34,7 @@ const PinEntryScreen = ({ navigation }) => {
         <Text style={styles.title}>Parents Mode</Text>
       </View>
       <View style={styles.functions}>
-        <TouchableOpacity onPress={() => navigation.navigate("Bedroom", {currentMode:"parents"})}>
+        <TouchableOpacity onPress={() => navigation.navigate("Bedroom", {currentMode:"parents", isBrowsingBook:true})}>
           <Image source={BrowseBooks} />
         </TouchableOpacity>
         <TouchableOpacity onPress={()=>navigation.navigate("TrackingActivity")}>

@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
   answerButton: {
     margin: 10,
     borderRadius: 10,
-    borderColor: "orange", // Mặc định là orange
+    borderColor: "orange",
     borderWidth: 10,
     padding: 10,
     alignItems: "center",
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   selectedAnswer: {
-    borderColor: "#5295FA", // Khi được chọn, màu viền là xanh dương
+    borderColor: "#5295FA", 
     borderWidth: 10,
   },
   correctAnswer: {
@@ -284,8 +284,8 @@ const styles = StyleSheet.create({
     position: "relative",
   },
   answerImage: {
-    width: 200,
-    height: 200,
+    width: 180,
+    height: 180,
     resizeMode: "cover",
   },
   tickOverlay: {

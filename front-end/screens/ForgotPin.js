@@ -12,64 +12,63 @@ import {
   ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import phyDoodleShapes from "../assets/BgImage/doodle.png";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import intersect from "../assets/img/Intersect.png";
 
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-const validateName = (name) => /^[A-Za-z]+$/.test(name);
-const validatePin = (pin) => /^\d{4}$/.test(pin);
 
-const SignupScreen = () => {
+const ForgotPin = () => {
   const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [pin, setPin] = useState("");
   const [errors, setErrors] = useState({});
 
   const navigation = useNavigation();
 
-  const handleSignup = async () => {
+  const handleForgotPin = async () => {
     const newErrors = {};
 
     if (!email) newErrors.email = "Enter a valid email";
     else if (!validateEmail(email)) newErrors.email = "Enter a valid email";
 
-    if (!name) newErrors.name = "Enter a valid name";
-    else if (!validateName(name))
-      newErrors.name = "Enter a valid name";
-
-    if (!pin) newErrors.pin = "Enter a valid pin";
-    else if (!validatePin(pin))
-      newErrors.pin = "Enter a valid pin";
-
     setErrors(newErrors);
     console.log(newErrors);
     if (Object.keys(newErrors).length === 0) {
       try {
-        const requestUrl = `${BASE_API_URL}/users/sign-up`;
-        const requestBody = { email, pin, username: name };
+        const requestUrl = `${BASE_API_URL}/otp/generate-otp`;
+        const requestBody = { email:email.toLowerCase() };
+        await axios.post(requestUrl, requestBody);
         console.log(requestBody);
-        const response = await axios.post(requestUrl, requestBody);
-        await AsyncStorage.setItem("userId", response.data.userId);
-        await AsyncStorage.setItem("username", response.data.username);
-        navigation.replace("Bedroom",{currentMode: "kids"});
+        navigation.replace("OTPVerification", { email:email.toLowerCase() });
       } catch (error) {
-        setErrors({ general: error.message });
+        if (
+          error.response &&
+          error.response.data &&
+          error.response.data.message
+        ) {
+          setErrors({ general: error.response.data.message });
+        } else {
+          setErrors({ general: "An unexpected error occurred" });
+        }
       }
     }
   };
 
-  const handleSignin = () => {
-    navigation.navigate("Login");
-  };
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <KeyboardAvoidingView style={styles.container} behavior="padding">
+        <TouchableOpacity
+          style={styles.BackButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Image source={require("../assets/img/back.png")} />
+        </TouchableOpacity>
         <View style={styles.titleWrap}>
-          <Text style={styles.titleStroke}>Sign Up</Text>
-          <Text style={styles.title}>Sign Up</Text>
+          <Text style={styles.titleStroke}>Forgot Pin</Text>
+          <Text style={styles.title}>Forgot Pin</Text>
         </View>
-        <Text style={styles.subtitle}>Create a new account</Text>
+        <Text style={styles.subtitle}>Enter your email for an OTP</Text>
+        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+        {errors.general && (
+          <Text style={styles.errorText}>{errors.general}</Text>
+        )}
         <View style={styles.inputContainer}>
           <View style={styles.inputRow}>
             <View style={styles.labelWrap}>
@@ -82,58 +81,15 @@ const SignupScreen = () => {
                 value={email}
                 onChangeText={(text) => setEmail(text)}
               />
-              
-              {errors.email && (
-                <Text style={styles.errorText}>{errors.email}</Text>
-              )}
-            </View>
-          </View>
-          <View style={styles.inputRow}>
-            <View style={styles.labelWrap}>
-              <Text style={styles.label}>Name:</Text>
-            </View>
-            <View style={styles.inputWrap}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your name"
-                value={name}
-                onChangeText={(text) => setName(text)}
-              />
-              {errors.name && (
-                <Text style={styles.errorText}>{errors.name}</Text>
-              )}
-            </View>
-          </View>
-          <View style={styles.inputRow}>
-            <View style={styles.labelWrap}>
-              <Text style={styles.label}>Create Pin:</Text>
-            </View>
-            <View style={styles.inputWrap}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter a four digit pin"
-                secureTextEntry
-                value={pin}
-                onChangeText={(text) => setPin(text)}
-              />
-              {errors.pin && <Text style={styles.errorText}>{errors.pin}</Text>}
             </View>
           </View>
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleSignup} style={styles.button}>
-            <Text style={styles.buttonText}>Sign Up</Text>
+          <TouchableOpacity onPress={handleForgotPin} style={styles.button}>
+            <Text style={styles.buttonText}>Request Code</Text>
           </TouchableOpacity>
         </View>
-        {errors.general && (
-          <Text style={styles.errorText}>{errors.general}</Text>
-        )}
-        <View style={styles.signInWrap}>
-          <Text style={styles.signInText}>Already have an account?</Text>
-          <TouchableOpacity onPress={handleSignin}>
-            <Text style={styles.signInLink}>Sign In</Text>
-          </TouchableOpacity>
-        </View>
+
         <Image source={intersect} style={styles.backgroundImage} />
       </KeyboardAvoidingView>
     </ScrollView>
@@ -185,10 +141,10 @@ const styles = StyleSheet.create({
   subtitle: {
     fontFamily: "McLaren",
     fontSize: 30,
+    marginBottom: 80,
   },
   inputContainer: {
     width: "100%",
-    marginTop: 80,
   },
 
   labelWrap: {
@@ -246,8 +202,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   errorText: {
-    position: "absolute",
-    left:310,
+    // marginBottom: 10,
     fontSize: 18,
     color: "red",
     fontWeight: "bold",
@@ -259,23 +214,12 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: -1,
   },
-  signInWrap: {
-    marginTop: 20,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  signInText: {
-    color: "835717",
-    fontSize: 20,
-  },
-  signInLink: {
-    color: "#835717",
-    marginLeft: 10,
-    fontWeight: "bold",
-    fontSize: 20,
+  BackButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    width: 50,
+    height: 50,
   },
 });
-export default SignupScreen;
-
-//BASE_API_URL=https://shrouded-depths-36068-b1b61255eb07.herokuapp.com/api/v1
+export default ForgotPin;

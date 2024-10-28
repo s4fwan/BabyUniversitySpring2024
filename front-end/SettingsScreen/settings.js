@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import * as Font from "expo-font";
 
 import {
@@ -6,22 +6,53 @@ import {
   Text,
   Switch,
   Image,
-  ImageBackground,
   Dimensions,
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import Slider from "@react-native-community/slider";
-import { useReadAloud } from "./Storage";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const SettingsScreen = ({ navigation }) => {
-  const { readAloudVal, setReadAloudVal } = useReadAloud();
   const [quizVal, setQuizVal] = useState(false);
-  const [sliderValue, setSliderValue] = useState(0);
+  const [readAloudVal, setReadAloudVal] = useState(false);
+  const [soundEffectVal, setSoundEffectVal] = useState(false);
 
-  const readAloud = () => setReadAloudVal((prevState) => !prevState);
-  const quiz = () => setQuizVal((prevState) => !prevState);
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const quizValue = await AsyncStorage.getItem("quizVal");
+        const readAloudValue = await AsyncStorage.getItem("readAloudVal");
+        const soundEffectValue = await AsyncStorage.getItem("soundEffectVal");
 
+        if (quizValue !== null) setQuizVal(JSON.parse(quizValue));
+        if (readAloudValue !== null) setReadAloudVal(JSON.parse(readAloudValue));
+        if (soundEffectValue !== null) setSoundEffectVal(JSON.parse(soundEffectValue));
+      } catch (error) {
+        console.error("Failed to load settings:", error);
+      }
+    };
+
+    loadSettings();
+  }, []);
+
+  const readAloud = async () => {
+    const newValue = !readAloudVal;
+    setReadAloudVal(newValue);
+    await AsyncStorage.setItem("readAloudVal", JSON.stringify(newValue));
+  };
+  
+  const quiz = async () => {
+    const newValue = !quizVal;
+    setQuizVal(newValue);
+    await AsyncStorage.setItem("quizVal", JSON.stringify(newValue));
+  };
+  
+  const soundEffect = async () => {
+    const newValue = !soundEffectVal;
+    setSoundEffectVal(newValue);
+    await AsyncStorage.setItem("soundEffectVal", JSON.stringify(newValue));
+  };
   const [loaded] = Font.useFonts({
     McLaren: require("../assets/fonts/McLaren.ttf"),
   });
@@ -29,9 +60,7 @@ const SettingsScreen = ({ navigation }) => {
   if (!loaded) {
     return null;
   }
-  const handleSliderChange = (value) => {
-    setSliderValue(value);
-  };
+  
 
   return (
     <View style={styles.container}>
@@ -71,67 +100,43 @@ const SettingsScreen = ({ navigation }) => {
 
         <View style={styles.option}>
           <View style={styles.elementWrapper}>
-            <Text style={styles.optionText}>Volumn</Text>
+            <Text style={styles.optionText}>Sound Effect</Text>
           </View>
-          <View>
+          <View style={styles.elementWrapperMiddle}>
             <Image
               source={require("../assets/settingsImages/volumn.png")}
               style={styles.icon}
             />
           </View>
           <View style={styles.elementWrapper}>
-            <Slider
-              style={styles.slider}
-              minimumTrackTintColor="#D17E21"
-              thumbTintColor="#D17E21"
-              onValueChange={handleSliderChange}
-              value={sliderValue}
-            />
-          </View>
-        </View>
-        <View style={styles.option}>
-          <View style={styles.elementWrapper}>
-            <Text style={styles.optionText}>Text Size</Text>
-          </View>
-          <View>
-            <Image
-              source={require("../assets/settingsImages/text_size_icon.png")}
-              style={[
-                styles.icon,
-                { width: 50 + sliderValue * 20, height: 50 + sliderValue * 20 },
-              ]}
-            />
-          </View>
-          <View style={styles.elementWrapper}>
-            <Slider
-              style={styles.slider}
-              minimumTrackTintColor="#D17E21"
-              thumbTintColor="#D17E21"
-              onValueChange={handleSliderChange}
-              value={sliderValue}
-            />
+            <View style={{ alignSelf: "center" }}>
+              <Switch
+                trackColor={{ false: "#767577", true: "#D17E21" }}
+                thumbColor={soundEffectVal ? "#FFFFFF" : "#FFFFFF"}
+                onValueChange={soundEffect}
+                value={soundEffectVal}
+                style={styles.switch}
+              />
+            </View>
           </View>
         </View>
         <View style={styles.option}>
           <View style={styles.elementWrapper}>
             <Text style={styles.optionText}>Quizzes</Text>
           </View>
-          <View>
+          <View style={styles.elementWrapperMiddle}>
             <Image
               source={require("../assets/settingsImages/quiz.png")}
-              style={[
-                styles.icon,
-                { width: 50 + sliderValue * 20, height: 50 + sliderValue * 20 },
-              ]}
+              style={styles.icon}
             />
           </View>
           <View style={styles.elementWrapper}>
             <View style={{ alignSelf: "center" }}>
               <Switch
                 trackColor={{ false: "#767577", true: "#D17E21" }}
-                thumbColor={readAloudVal ? "#FFFFFF" : "#FFFFFF"}
-                onValueChange={readAloud}
-                value={readAloudVal}
+                thumbColor={quizVal ? "#FFFFFF" : "#FFFFFF"}
+                onValueChange={quiz}
+                value={quizVal}
                 style={styles.switch}
               />
             </View>

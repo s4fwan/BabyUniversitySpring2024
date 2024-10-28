@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { BASE_API_URL } from "@env";
-import intersect from "../assets/img/Intersect.png";
 import {
   Text,
   TextInput,
@@ -11,50 +10,46 @@ import {
   KeyboardAvoidingView,
   Image,
   ScrollView,
-  Alert
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import intersect from "../assets/img/Intersect.png";
+import { useRoute } from "@react-navigation/native";
+
 
 const validatePin = (pin) => /^\d{4}$/.test(pin);
 
-const ChangePinScreen = () => {
-  const [oldPin, setOldPin] = useState("");
-  const [newPin, setNewPin] = useState("");
+const ResetPin = () => {
   const [confirmPin, setConfirmPin] = useState("");
+  const [newPin, setNewPin] = useState("");
   const [errors, setErrors] = useState({});
-
   const navigation = useNavigation();
 
-  const handleChangePin = async () => {
+  const route = useRoute();
+  const { email, otp } = route.params;
+
+  const handleResetPin = async () => {
     const newErrors = {};
 
-    if (!validatePin(oldPin))
-      newErrors.oldPin = "Please enter a valid old pin (4 digits).";
+    if (!newPin) newErrors.newPin = "Enter a valid PIN";
+    else if (!validatePin(newPin)) newErrors.newPin = "Enter a valid PIN";
 
-    if (!validatePin(newPin))
-      newErrors.newPin = "Please enter a valid new pin (4 digits).";
+    if (!confirmPin) newErrors.confirmPin = "Enter a valid PIN";
+    else if (!validatePin(confirmPin))
+      newErrors.confirmPin = "Enter a valid PIN";
 
-    if (newPin !== confirmPin)
+    if (newPin !== confirmPin) {
       newErrors.confirmPin = "Confirm pin does not match new pin.";
+    }
 
     setErrors(newErrors);
-
+    console.log(newErrors);
     if (Object.keys(newErrors).length === 0) {
       try {
-        const userId = await AsyncStorage.getItem("userId");
-        console.log({ userId, oldPin, newPin });
-        const response = await axios.put(`${BASE_API_URL}/users/change-pin`, { userId, oldPin, newPin });
-        Alert.alert(
-          "Success",
-          "Your PIN has been changed successfully!",
-          [
-            {
-              text: "OK",
-              onPress: () => navigation.replace("Bedroom"),
-            }
-          ]
-        );
+        const requestUrl = `${BASE_API_URL}/users/reset-pin`;
+        const requestBody = { email, otp, newPin };
+        const response = await axios.put(requestUrl, requestBody);
+
+        navigation.replace("Login");
       } catch (error) {
         setErrors({ general: error.message });
       }
@@ -68,28 +63,11 @@ const ChangePinScreen = () => {
         <Image source={require("../assets/img/back.png")} />
       </TouchableOpacity>
         <View style={styles.titleWrap}>
-          <Text style={styles.titleStroke}>Change PIN</Text>
-          <Text style={styles.title}>Change PIN</Text>
+          <Text style={styles.titleStroke}>Reset PIN</Text>
+          <Text style={styles.title}>Reset PIN</Text>
         </View>
-        <Text style={styles.subtitle}>Change your PIN</Text>
+        <Text style={styles.subtitle}>Enter your new PIN</Text>
         <View style={styles.inputContainer}>
-          <View style={styles.inputRow}>
-            <View style={styles.labelWrap}>
-              <Text style={styles.label}>Old PIN:</Text>
-            </View>
-            <View style={styles.inputWrap}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your old PIN"
-                value={oldPin}
-                onChangeText={(pin) => setOldPin(pin)}
-              />
-              
-              {errors.oldPin && (
-                <Text style={styles.errorText}>{errors.oldPin}</Text>
-              )}
-            </View>
-          </View>
           <View style={styles.inputRow}>
             <View style={styles.labelWrap}>
               <Text style={styles.label}>New PIN:</Text>
@@ -101,29 +79,34 @@ const ChangePinScreen = () => {
                 value={newPin}
                 onChangeText={(pin) => setNewPin(pin)}
               />
+
               {errors.newPin && (
                 <Text style={styles.errorText}>{errors.newPin}</Text>
               )}
             </View>
           </View>
+        </View>
+        <View style={styles.inputContainer}>
           <View style={styles.inputRow}>
             <View style={styles.labelWrap}>
-              <Text style={styles.label}>Confirm New PIN:</Text>
+              <Text style={styles.label}>Confirm PIN:</Text>
             </View>
             <View style={styles.inputWrap}>
               <TextInput
                 style={styles.input}
-                placeholder="Confirm New PIN"
-                secureTextEntry
+                placeholder="Enter your confirm PIN"
                 value={confirmPin}
                 onChangeText={(pin) => setConfirmPin(pin)}
               />
-              {errors.confirmPin && <Text style={styles.errorText}>{errors.confirmPin}</Text>}
+
+              {errors.confirmPin && (
+                <Text style={styles.errorText}>{errors.confirmPin}</Text>
+              )}
             </View>
           </View>
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleChangePin} style={styles.button}>
+          <TouchableOpacity onPress={handleResetPin} style={styles.button}>
             <Text style={styles.buttonText}>Reset your PIN</Text>
           </TouchableOpacity>
         </View>
@@ -181,15 +164,16 @@ const styles = StyleSheet.create({
   subtitle: {
     fontFamily: "McLaren",
     fontSize: 30,
+    marginBottom:60,
   },
   inputContainer: {
     width: "100%",
-    marginTop: 80,
+    // marginTop: 80,
   },
 
   labelWrap: {
     alignItems: "flex-end",
-    width: 180,
+    width: 130,
   },
   inputWrap: {
     flexShrink: 1,
@@ -197,9 +181,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   inputRow: {
-    width: "100%",
-    justifyContent:"center",
-    // backgroundColor:"red",
+    width: "fit-content",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -245,7 +227,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     position: "absolute",
-    left:310,
+    left: 310,
     fontSize: 18,
     color: "red",
     fontWeight: "bold",
@@ -257,22 +239,6 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: -1,
   },
-  signInWrap: {
-    marginTop: 20,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  signInText: {
-    color: "835717",
-    fontSize: 20,
-  },
-  signInLink: {
-    color: "#835717",
-    marginLeft: 10,
-    fontWeight: "bold",
-    fontSize: 20,
-  },
   BackButton: {
     position: "absolute",
     top: 40,
@@ -281,4 +247,4 @@ const styles = StyleSheet.create({
     height: 50,
   }
 });
-export default ChangePinScreen;
+export default ResetPin;

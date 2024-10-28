@@ -8,9 +8,8 @@ import {
   Image,
 } from "react-native";
 import axios from "axios";
-import { auth } from "../firebase";
 import ParentUI from "./ParentUI";
-import { useFonts, Itim_400Regular } from "@expo-google-fonts/itim";
+
 import intersect from "../assets/img/Intersect.png";
 import back from "../assets/img/back.png";
 

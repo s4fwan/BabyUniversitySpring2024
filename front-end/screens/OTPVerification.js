@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { BASE_API_URL } from "@env";
-import intersect from "../assets/img/Intersect.png";
 import {
   Text,
   TextInput,
@@ -11,50 +10,46 @@ import {
   KeyboardAvoidingView,
   Image,
   ScrollView,
-  Alert
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import intersect from "../assets/img/Intersect.png";
+import { useRoute } from "@react-navigation/native";
 
-const validatePin = (pin) => /^\d{4}$/.test(pin);
 
-const ChangePinScreen = () => {
-  const [oldPin, setOldPin] = useState("");
-  const [newPin, setNewPin] = useState("");
-  const [confirmPin, setConfirmPin] = useState("");
+const validateOTP = (otp) => /^[A-Za-z0-9]{6}$/.test(otp);
+
+const OTPVerification = () => {
+  const [otp, setOTP] = useState("");
   const [errors, setErrors] = useState({});
-
   const navigation = useNavigation();
 
-  const handleChangePin = async () => {
+  const route = useRoute();
+  const { email } = route.params;
+  
+
+  const handleResendOTP = async () => {
+    try {
+      const requestUrl = `${BASE_API_URL}/otp/generate-otp`;
+      const requestBody = { email };
+      axios.post(requestUrl, requestBody);
+    } catch (error) {
+      setErrors({ general: error.message });
+    }
+  }
+
+  const handleOTPVerification = async () => {
     const newErrors = {};
-
-    if (!validatePin(oldPin))
-      newErrors.oldPin = "Please enter a valid old pin (4 digits).";
-
-    if (!validatePin(newPin))
-      newErrors.newPin = "Please enter a valid new pin (4 digits).";
-
-    if (newPin !== confirmPin)
-      newErrors.confirmPin = "Confirm pin does not match new pin.";
-
+    if (!otp) newErrors.otp = "Enter a valid OTP";
+    else if (!validateOTP(otp)) newErrors.otp = "Enter a valid OTP";
     setErrors(newErrors);
-
+    console.log(newErrors);
     if (Object.keys(newErrors).length === 0) {
       try {
-        const userId = await AsyncStorage.getItem("userId");
-        console.log({ userId, oldPin, newPin });
-        const response = await axios.put(`${BASE_API_URL}/users/change-pin`, { userId, oldPin, newPin });
-        Alert.alert(
-          "Success",
-          "Your PIN has been changed successfully!",
-          [
-            {
-              text: "OK",
-              onPress: () => navigation.replace("Bedroom"),
-            }
-          ]
-        );
+        const requestUrl = `${BASE_API_URL}/otp/verify-otp`;
+        const requestBody = { email, otp };
+        const response = await axios.post(requestUrl, requestBody);
+        console.log(requestBody);
+        if (response.data.success) navigation.replace("ResetPin",{email,otp});
       } catch (error) {
         setErrors({ general: error.message });
       }
@@ -68,63 +63,37 @@ const ChangePinScreen = () => {
         <Image source={require("../assets/img/back.png")} />
       </TouchableOpacity>
         <View style={styles.titleWrap}>
-          <Text style={styles.titleStroke}>Change PIN</Text>
-          <Text style={styles.title}>Change PIN</Text>
+          <Text style={styles.titleStroke}>Forgot Pin</Text>
+          <Text style={styles.title}>Forgot Pin</Text>
         </View>
-        <Text style={styles.subtitle}>Change your PIN</Text>
+        <Text style={styles.subtitle}>Enter the OTP sent to your email</Text>
         <View style={styles.inputContainer}>
           <View style={styles.inputRow}>
             <View style={styles.labelWrap}>
-              <Text style={styles.label}>Old PIN:</Text>
+              <Text style={styles.label}>OTP:</Text>
             </View>
             <View style={styles.inputWrap}>
               <TextInput
                 style={styles.input}
-                placeholder="Enter your old PIN"
-                value={oldPin}
-                onChangeText={(pin) => setOldPin(pin)}
+                placeholder="Enter an OTP"
+                value={otp}
+                onChangeText={(otp) => setOTP(otp)}
               />
-              
-              {errors.oldPin && (
-                <Text style={styles.errorText}>{errors.oldPin}</Text>
+
+              {errors.email && (
+                <Text style={styles.errorText}>{errors.email}</Text>
               )}
-            </View>
-          </View>
-          <View style={styles.inputRow}>
-            <View style={styles.labelWrap}>
-              <Text style={styles.label}>New PIN:</Text>
-            </View>
-            <View style={styles.inputWrap}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your new PIN"
-                value={newPin}
-                onChangeText={(pin) => setNewPin(pin)}
-              />
-              {errors.newPin && (
-                <Text style={styles.errorText}>{errors.newPin}</Text>
-              )}
-            </View>
-          </View>
-          <View style={styles.inputRow}>
-            <View style={styles.labelWrap}>
-              <Text style={styles.label}>Confirm New PIN:</Text>
-            </View>
-            <View style={styles.inputWrap}>
-              <TextInput
-                style={styles.input}
-                placeholder="Confirm New PIN"
-                secureTextEntry
-                value={confirmPin}
-                onChangeText={(pin) => setConfirmPin(pin)}
-              />
-              {errors.confirmPin && <Text style={styles.errorText}>{errors.confirmPin}</Text>}
             </View>
           </View>
         </View>
         <View style={styles.buttonContainer}>
-          <TouchableOpacity onPress={handleChangePin} style={styles.button}>
-            <Text style={styles.buttonText}>Reset your PIN</Text>
+          <TouchableOpacity onPress={handleOTPVerification} style={styles.button}>
+            <Text style={styles.buttonText}>Verify</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.signInWrap}>
+          <TouchableOpacity onPress={handleResendOTP}>
+            <Text style={styles.signInLink}>Resend code?</Text>
           </TouchableOpacity>
         </View>
         {errors.general && (
@@ -189,7 +158,7 @@ const styles = StyleSheet.create({
 
   labelWrap: {
     alignItems: "flex-end",
-    width: 180,
+    width: 80,
   },
   inputWrap: {
     flexShrink: 1,
@@ -197,9 +166,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   inputRow: {
-    width: "100%",
-    justifyContent:"center",
-    // backgroundColor:"red",
+    width: "fit-content",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -245,7 +212,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     position: "absolute",
-    left:310,
+    left: 310,
     fontSize: 18,
     color: "red",
     fontWeight: "bold",
@@ -281,4 +248,4 @@ const styles = StyleSheet.create({
     height: 50,
   }
 });
-export default ChangePinScreen;
+export default OTPVerification;
