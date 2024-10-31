@@ -48,7 +48,6 @@ const ResetPin = () => {
         const requestUrl = `${BASE_API_URL}/users/reset-pin`;
         const requestBody = { email, otp, newPin };
         const response = await axios.put(requestUrl, requestBody);
-
         navigation.replace("Login");
       } catch (error) {
         setErrors({ general: error.message });

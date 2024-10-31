@@ -13,8 +13,8 @@ const createOTP = async (email) => {
   return otp;
 };
 
-const validateOTP = async (email, code) => {
-  const existingCode = await OTP.findOne({ email, code });
+const validateOTP = async (email, otp) => {
+  const existingCode = await OTP.findOne({ email, otp });
   if (!existingCode) {
     return { success: false, message: "Invalid or already used code" };
   }

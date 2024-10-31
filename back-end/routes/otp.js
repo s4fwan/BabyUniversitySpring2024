@@ -39,9 +39,11 @@ router.post("/generate-otp", async (req, res) => {
 });
 
 router.post("/verify-otp", async (req, res) => {
-  const { email, code } = req.body;
+  console.log(req.body);
+  const { email, otp } = req.body;
   try {
-    const result = await validateOTP(email, code);
+    const result = await validateOTP(email, otp);
+    console.log("hehe",result);
     res.status(200).json(result);
   } catch (error) {
     console.error(error);

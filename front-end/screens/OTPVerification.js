@@ -31,7 +31,7 @@ const OTPVerification = () => {
     try {
       const requestUrl = `${BASE_API_URL}/otp/generate-otp`;
       const requestBody = { email };
-      axios.post(requestUrl, requestBody);
+      await axios.post(requestUrl, requestBody);
     } catch (error) {
       setErrors({ general: error.message });
     }
@@ -42,14 +42,13 @@ const OTPVerification = () => {
     if (!otp) newErrors.otp = "Enter a valid OTP";
     else if (!validateOTP(otp)) newErrors.otp = "Enter a valid OTP";
     setErrors(newErrors);
-    console.log(newErrors);
     if (Object.keys(newErrors).length === 0) {
       try {
         const requestUrl = `${BASE_API_URL}/otp/verify-otp`;
         const requestBody = { email, otp };
         const response = await axios.post(requestUrl, requestBody);
-        console.log(requestBody);
         if (response.data.success) navigation.replace("ResetPin",{email,otp});
+        else setErrors({ general: response.data.message });
       } catch (error) {
         setErrors({ general: error.message });
       }
@@ -67,6 +66,9 @@ const OTPVerification = () => {
           <Text style={styles.title}>Forgot Pin</Text>
         </View>
         <Text style={styles.subtitle}>Enter the OTP sent to your email</Text>
+        {errors.general && (
+          <Text style={styles.errorText}>{errors.general}</Text>
+        )}
         <View style={styles.inputContainer}>
           <View style={styles.inputRow}>
             <View style={styles.labelWrap}>
@@ -96,9 +98,7 @@ const OTPVerification = () => {
             <Text style={styles.signInLink}>Resend code?</Text>
           </TouchableOpacity>
         </View>
-        {errors.general && (
-          <Text style={styles.errorText}>{errors.general}</Text>
-        )}
+        
         <Image source={intersect} style={styles.backgroundImage} />
       </KeyboardAvoidingView>
     </ScrollView>
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: "100%",
-    marginTop: 80,
+    marginTop: 40,
   },
 
   labelWrap: {
@@ -211,11 +211,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   errorText: {
-    position: "absolute",
-    left: 310,
+    // position: "absolute",
+    // left: 310,
     fontSize: 18,
     color: "red",
     fontWeight: "bold",
+    marginTop:20,
   },
   backgroundImage: {
     position: "absolute",
