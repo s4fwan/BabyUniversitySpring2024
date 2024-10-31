@@ -7,7 +7,7 @@ import { useFonts } from "expo-font";
 import phyDoodleShapes from '../assets/BgImage/doodle.png'; // Import background image
 import goBackButton from '../assets/menuImages/gobackIcon.png';
 import PurchaseHistory from '../MenuButton'; // Import the MenuButton component
-import ParentUI from '../ParentUI/ParentUI'; // Import the ParentUI component
+import ParentUI from '../screens/ParentUI'; // Import the ParentUI component
 import BookStore from '../BookStore/BookStore'; // Import the BookStore component
 
 const PurchaseHistoryText = () => {

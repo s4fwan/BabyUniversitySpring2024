@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const BookSchema = new mongoose.Schema({
   name: {
@@ -12,7 +12,20 @@ const BookSchema = new mongoose.Schema({
   bookPageCount: {
     type: Number,
     required: true,
-  }
+  },
+  pages: [
+    {
+      animation: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Animation",
+        required: true,
+      },
+      sound: {
+        type: String,
+        default: "",
+      },
+    },
+  ],
 });
 
-module.exports = mongoose.model('Book', BookSchema);
+module.exports = mongoose.model("Book", BookSchema);

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Animated, Easing, TouchableOpacity, Text } from 'react-native';
 import BackButton from './BackButton';
+import LottieView from "lottie-react-native";
+import animationData from '../assets/animation/page2.json';
+
 const page1 = () => {
   const [bounceValue] = useState(new Animated.Value(0));
   const [isAnimating, setIsAnimating] = useState(false);
@@ -67,11 +70,17 @@ const page1 = () => {
   return (
     <View style={styles.container}>
       <BackButton />
-      <TouchableOpacity onPress={isAnimating ? stopAnimation : startAnimation}>
+      {/* <TouchableOpacity onPress={isAnimating ? stopAnimation : startAnimation}>
         <Animated.View style={ballStyle} />
         <View style={styles.shadow} />
-      </TouchableOpacity>
-      <Text style={styles.text}>This is a ball.</Text>
+      </TouchableOpacity> */}
+      <LottieView
+        source={animationData} 
+        autoPlay
+        loop
+        style={{ width: 300, height: 300 }}
+      />
+      <Text style={styles.text}>Xin chao.</Text>
     </View>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { BASE_API_URL } from "@env";
+import intersect from "../assets/img/Intersect.png";
 import {
   Text,
   TextInput,
@@ -13,7 +14,6 @@ import {
   Alert
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import phyDoodleShapes from "../assets/BgImage/doodle.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const validatePin = (pin) => /^\d{4}$/.test(pin);
@@ -63,76 +63,84 @@ const ChangePinScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <Image source={phyDoodleShapes} style={styles.backgroundImage} />
       <KeyboardAvoidingView style={styles.container} behavior="padding">
-        <Text style={styles.header}>Baby University Change Pin</Text>
+      <TouchableOpacity style={styles.BackButton} onPress={()=>navigation.goBack()}>
+        <Image source={require("../assets/img/back.png")} />
+      </TouchableOpacity>
+        <View style={styles.titleWrap}>
+          <Text style={styles.titleStroke}>Change PIN</Text>
+          <Text style={styles.title}>Change PIN</Text>
+        </View>
+        <Text style={styles.subtitle}>Change your PIN</Text>
         <View style={styles.inputContainer}>
           <View style={styles.inputRow}>
-            <Text style={styles.label}>Old Pin:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter the old pin"
-              secureTextEntry
-              value={oldPin}
-              onChangeText={(text) => setOldPin(text)}
-            />
-            {errors.oldPin && (
-              <Text style={styles.errorText}>{errors.oldPin}</Text>
-            )}
+            <View style={styles.labelWrap}>
+              <Text style={styles.label}>Old PIN:</Text>
+            </View>
+            <View style={styles.inputWrap}>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your old PIN"
+                value={oldPin}
+                onChangeText={(pin) => setOldPin(pin)}
+              />
+              
+              {errors.oldPin && (
+                <Text style={styles.errorText}>{errors.oldPin}</Text>
+              )}
+            </View>
           </View>
           <View style={styles.inputRow}>
-            <Text style={styles.label}>New Pin:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter a four digit pin"
-              secureTextEntry
-              value={newPin}
-              onChangeText={(text) => setNewPin(text)}
-            />
-            {errors.newPin && (
-              <Text style={styles.errorText}>{errors.newPin}</Text>
-            )}
+            <View style={styles.labelWrap}>
+              <Text style={styles.label}>New PIN:</Text>
+            </View>
+            <View style={styles.inputWrap}>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your new PIN"
+                value={newPin}
+                onChangeText={(pin) => setNewPin(pin)}
+              />
+              {errors.newPin && (
+                <Text style={styles.errorText}>{errors.newPin}</Text>
+              )}
+            </View>
           </View>
           <View style={styles.inputRow}>
-            <Text style={styles.label}>Confirm Pin:</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter the new pin again"
-              secureTextEntry
-              value={confirmPin}
-              onChangeText={(text) => setConfirmPin(text)}
-            />
-            {errors.confirmPin && (
-              <Text style={styles.errorText}>{errors.confirmPin}</Text>
-            )}
+            <View style={styles.labelWrap}>
+              <Text style={styles.label}>Confirm New PIN:</Text>
+            </View>
+            <View style={styles.inputWrap}>
+              <TextInput
+                style={styles.input}
+                placeholder="Confirm New PIN"
+                secureTextEntry
+                value={confirmPin}
+                onChangeText={(pin) => setConfirmPin(pin)}
+              />
+              {errors.confirmPin && <Text style={styles.errorText}>{errors.confirmPin}</Text>}
+            </View>
           </View>
         </View>
         <View style={styles.buttonContainer}>
           <TouchableOpacity onPress={handleChangePin} style={styles.button}>
-            <Text style={styles.buttonText}>Change Pin</Text>
+            <Text style={styles.buttonText}>Reset your PIN</Text>
           </TouchableOpacity>
         </View>
         {errors.general && (
           <Text style={styles.errorText}>{errors.general}</Text>
         )}
-        <TouchableOpacity
-          style={styles.goBackButton}
-          onPress={() => navigation.navigate("Bedroom")}
-        >
-          <Text style={styles.goBackText}>Go Back</Text>
-        </TouchableOpacity>
+        <Image source={intersect} style={styles.backgroundImage} />
       </KeyboardAvoidingView>
     </ScrollView>
   );
 };
-
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
     justifyContent: "center",
     height: "100%",
     marginTop: 0,
-    marginBottom: -320,
   },
   header: {
     fontSize: 50,
@@ -144,7 +152,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 20,
+    // paddingVertical: 20,
     paddingHorizontal: 10,
   },
   container: {
@@ -152,58 +160,125 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
+    backgroundColor: "#FFFEFB",
+  },
+  titleStroke: {
+    fontSize: 100,
+    color: "black",
+    position: "absolute",
+    textShadowColor: "black",
+    textShadowOffset: { width: 5, height: 5 },
+    textShadowRadius: 10,
+    fontFamily: "McLaren",
+    fontWeight: "bold",
+  },
+  title: {
+    color: "#B36003",
+    fontFamily: "McLaren",
+    fontSize: 100,
+    fontWeight: "bold",
+  },
+  subtitle: {
+    fontFamily: "McLaren",
+    fontSize: 30,
   },
   inputContainer: {
-    width: "90%",
-    marginBottom: 20,
+    width: "100%",
+    marginTop: 80,
+  },
+
+  labelWrap: {
+    alignItems: "flex-end",
+    width: 180,
+  },
+  inputWrap: {
+    flexShrink: 1,
+    alignItems: "center",
+    flexDirection: "row",
   },
   inputRow: {
+    width: "100%",
+    justifyContent:"center",
+    // backgroundColor:"red",
+    display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
-    justifyContent: "space-between",
+    alignContent: "center",
+    marginTop: 20,
+    marginHorizontal: "auto",
+    transform: [{ translateX: -30 }],
   },
   label: {
     marginRight: 10,
+    textAlign: "right",
+    fontSize: 20,
     fontWeight: "bold",
-    flex: 1,
   },
   input: {
-    flex: 2,
-    height: 40,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 5,
+    width: 300,
     paddingHorizontal: 10,
+    paddingVertical: 15,
+    fontSize: 18,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: "orange",
+    borderRadius: 20,
   },
   buttonContainer: {
-    marginTop: 20,
-    width: "60%",
+    marginTop: 40,
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   button: {
-    backgroundColor: "#3F3CB4",
+    backgroundColor: "#AD620E",
+    flexShrink: 1,
     paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
+    paddingHorizontal: 100,
+    borderRadius: 20,
     alignItems: "center",
   },
   buttonText: {
     color: "white",
-    fontWeight: "bold",
+    fontWeight: "700",
+    fontSize: 20,
   },
   errorText: {
+    position: "absolute",
+    left:310,
+    fontSize: 18,
     color: "red",
-    marginTop: 5,
-    marginLeft: 10,
-    fontSize: 12,
-  },
-  goBackButton: {
-    marginTop: 20,
-  },
-  goBackText: {
-    color: "#3F3CB4",
-    fontSize: 16,
     fontWeight: "bold",
   },
+  backgroundImage: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: -1,
+  },
+  signInWrap: {
+    marginTop: 20,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  signInText: {
+    color: "835717",
+    fontSize: 20,
+  },
+  signInLink: {
+    color: "#835717",
+    marginLeft: 10,
+    fontWeight: "bold",
+    fontSize: 20,
+  },
+  BackButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    width: 50,
+    height: 50,
+  }
 });
 export default ChangePinScreen;

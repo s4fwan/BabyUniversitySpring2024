@@ -4,7 +4,7 @@ import { Itim_400Regular } from '@expo-google-fonts/itim';
 import { useFonts } from 'expo-font';
 import phyDoodleShapes from '../assets/BgImage/doodle.png';
 import goBackButton from '../assets/menuImages/gobackIcon.png';
-import ParentUI from '../ParentUI/ParentUI';
+import ParentUI from '../screens/ParentUI';
 import AiBook from '../assets/booksImages/AIBook.png';
 import ConfirmPurchaseButton from '../assets/buyButtons/ConfirmPurchaseButton.png';
 import PurchaseSuccessful from '../purchaseSuccessful';

@@ -9,7 +9,7 @@ const LogoutSuccessful = () => {
   const navigation = useNavigation();
 
   const handleLoginRedirect = () => {
-    navigation.navigate('Login'); 
+    navigation.navigate('Login');
   };
 
   return (

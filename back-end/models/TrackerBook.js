@@ -18,7 +18,20 @@ const TrackerBookSchema = new mongoose.Schema({
   bookPageCount: {
     type: Number,
     required: true,
-  }
+  },
+  quizTrack: [
+    {
+      question: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Question",
+        required: true,
+      },
+      selectedAnswer: {
+        type: Number,
+        required: false,
+      },
+    },
+  ],
 });
 
 module.exports = mongoose.model('TrackerBook', TrackerBookSchema);

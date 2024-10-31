@@ -4,7 +4,7 @@ import { Itim_400Regular } from '@expo-google-fonts/itim'; // Import custom font
 import { useFonts } from 'expo-font';
 import phyDoodleShapes from '../assets/BgImage/doodle.png'; // Import background image
 import goBackButton from '../assets/menuImages/gobackIcon.png';
-import ParentUI from '../ParentUI/ParentUI'; // Import the ParentUI component
+import ParentUI from '../screens/ParentUI'; // Import the ParentUI component
 import AiBook from '../assets/booksImages/AIBook.png'; // Import AI for Babies Book
 import NucPhysics from '../assets/booksImages/nuclearPhysicsBook.png'; // Import Nuclear Physics for Babies Book
 import AiBookDesc from '../assets/booksDesc/AIBookDesc.png'; // Import AI Book description

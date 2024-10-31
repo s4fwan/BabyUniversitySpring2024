@@ -5,16 +5,21 @@ import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import BedRoomScreen from './Bedroom/BedRoomScreen';
-import PinEntryScreen from './PinPage'
+import PinEntryScreen from './screens/PinPage'
 import LoginScreen from './screens/LoginScreen';
-import ParentUI from '../front-end/ParentUI/ParentUI';
+import ParentUI from '../front-end/screens/ParentUI';
 import SignupScreen from './SignUp/signup';
 import SwipeBook from './screens/SwipeBook';
+import ForgotPin from './screens/ForgotPin';
+import OTPVerification from './screens/OTPVerification';
+import ResetPin from './screens/ResetPin';
 import LogoutSuccessful from './Logout Page';
 import UsernameDisplay from './UserName'
 import SettingsScreen from './SettingsScreen/settings'
+
 import { ReadAloudProvider } from './SettingsScreen/Storage';
 import ChangePin from './screens/ChangePinScreen';
+import TrackingActivity from './screens/TrackingActivity';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -33,7 +38,10 @@ export default function App() {
         <Stack.Screen options={{ headerShown: false }} name="UserName" component={UsernameDisplay} />
         <Stack.Screen options={{ headerShown: false }} name="Settings" component={SettingsScreen} />
         <Stack.Screen options={{ headerShown: false }} name="ChangePin" component={ChangePin} />
-
+        <Stack.Screen options={{ headerShown: false }} name="TrackingActivity" component={TrackingActivity} />
+        <Stack.Screen options={{ headerShown: false }} name="ForgotPin" component={ForgotPin} />
+        <Stack.Screen options={{ headerShown: false }} name="OTPVerification" component={OTPVerification} />
+        <Stack.Screen options={{ headerShown: false }} name="ResetPin" component={ResetPin} />
       </Stack.Navigator>
       
     </NavigationContainer>

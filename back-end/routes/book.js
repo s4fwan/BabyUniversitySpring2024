@@ -4,7 +4,7 @@ const Book = require('../models/Book');
 
 router.get('/:id', async (req, res) => {
   try {
-    const book = await Book.findById(req.params.id);
+    const book = await Book.findById(req.params.id).populate('pages.animation');
     if (!book) {
       return res.status(404).json({ message: 'Book not found' });
     }
@@ -13,6 +13,7 @@ router.get('/:id', async (req, res) => {
     if (error.kind === 'ObjectId') {
       return res.status(400).json({ message: 'Invalid book ID' });
     }
+    console.log(error.message);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -54,5 +55,6 @@ router.put('/update-book', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 module.exports = router;

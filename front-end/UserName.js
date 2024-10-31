@@ -16,8 +16,7 @@ const UsernameDisplay = () => {
         console.error("Logout failed: ", error);
       });
   };
-
-  return (
+return (
     
     <View style={styles.container}>
       <Image source={phyDoodleShapes} style={styles.backgroundImage} />

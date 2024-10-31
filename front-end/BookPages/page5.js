@@ -118,7 +118,7 @@ const Page5 = () => {
           <Animated.View style={[styles.ball, { transform: [{ scale }] }]} />
         </TouchableOpacity>
 
-        
+
 
         <View style = {styles.bodyText}>
             <Text style = {{color: 'black', fontSize: 70, fontWeight: 700}}>All balls are made of atoms.</Text>

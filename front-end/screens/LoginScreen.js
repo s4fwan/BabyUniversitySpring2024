@@ -1,65 +1,63 @@
 import React, { useState, useEffect } from "react";
+import * as Font from "expo-font";
 import {
   Text,
   View,
   TextInput,
-  Button,
+  
   StyleSheet,
   KeyboardAvoidingView,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import UIBallAnimation from "../ballAnimation/ballAnimation";
 import axios from "axios";
 import { BASE_API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import intersect from "../assets/img/Intersect.png";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [pin, setPin] = useState("");
   const [isLoginClicked, setIsLoginClicked] = useState(false);
-
   const navigation = useNavigation();
 
+  const [loaded] = Font.useFonts({
+    McLaren: require("../assets/fonts/McLaren.ttf"),
+  });
+ 
   useEffect(() => {
     const checkLogin = async () => {
       try {
         const userId = await AsyncStorage.getItem("userId");
         if (userId) {
-          navigation.navigate("Bedroom");
+          navigation.navigate("Bedroom", { currentMode: "kids" });
         }
       } catch (e) {
         console.log(e);
       }
     };
-
+   
     checkLogin();
   }, []);
-
-  // useEffect(() => {
-  //     const unsubscribe = auth.onAuthStateChanged(user => {
-  //         if (user) {
-  //             navigation.navigate("Bedroom");
-  //         }
-  //     });
-  //     return unsubscribe;
-  // }, []);
-
+  if (!loaded) {
+    return null;
+  }
   const handleSignup = () => {
     navigation.navigate("SignUp");
   };
 
-  const handleLogin = () => {
-    console.log(email, pin);
+  const handleLogin =  () => {
     console.log(`${BASE_API_URL}/users/sign-in`);
     setIsLoginClicked(true);
     axios
       .post(`${BASE_API_URL}/users/sign-in`, { email, pin })
-      .then((response) => {
+      .then(async (response) => {
         if (response.status === 200) {
-          AsyncStorage.setItem("userId", response.data.userId);
+          await AsyncStorage.setItem("userId", response.data.userId);
+          await AsyncStorage.setItem("username", response.data.username);
           console.log("Logged in with user", response.data.userEmail);
-          navigation.navigate("Bedroom");
+          navigation.navigate("Bedroom", { currentMode: "kids" });
         } else {
           alert(response.data.message);
         }
@@ -73,28 +71,56 @@ const LoginScreen = () => {
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <View style={styles.ballAnimationContainer}>
+      {/* <View style={styles.ballAnimationContainer}>
         <UIBallAnimation />
+      </View> */}
+      <Image source={require("../assets/img/logo.png")} style={styles.logo} />
+
+      <View style={styles.titleWrap}>
+        <Text style={styles.titleStroke}>Baby University</Text>
+        <Text style={styles.title}>Baby University</Text>
       </View>
+      <Text style={styles.subtitle}>Welcome back!</Text>
       <View style={styles.inputContainer}>
         <View style={styles.inputRow}>
-          <Text style={styles.label}>Email:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your email"
-            value={email}
-            onChangeText={(text) => setEmail(text)}
-          />
+          <View style={styles.labelWrap}>
+            <Text style={styles.label}>Email:</Text>
+          </View>
+          <View style={styles.inputWrap}>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={(text) => setEmail(text)}
+            />
+          </View>
         </View>
         <View style={styles.inputRow}>
-          <Text style={styles.label}>Pin:</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your pin"
-            secureTextEntry
-            value={pin}
-            onChangeText={(text) => setPin(text)}
-          />
+          <View style={styles.labelWrap}>
+            <Text style={styles.label}>Pin:</Text>
+          </View>
+          <View style={styles.inputWrap}>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your pin"
+              secureTextEntry
+              value={pin}
+              onChangeText={(text) => setPin(text)}
+            />
+            <TouchableOpacity onPress={()=>navigation.navigate("ForgotPin")}>
+            <Text
+              style={{
+                position: "absolute",
+                right: -120,
+                fontSize: 24,
+                color: "#835717",
+                fontWeight: "bold",
+              }}
+            >
+              Forgot Pin
+            </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
       <View style={styles.buttonContainer}>
@@ -105,10 +131,14 @@ const LoginScreen = () => {
         >
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={handleSignup} style={styles.button}>
-          <Text style={styles.buttonText}>Create Account</Text>
+      </View>
+      <View style={styles.signUpWrap}>
+        <Text style={styles.signUpText}>Don't have an account?</Text>
+        <TouchableOpacity onPress={handleSignup}>
+          <Text style={styles.signUpLink}>Sign up</Text>
         </TouchableOpacity>
       </View>
+      <Image source={intersect} style={styles.backgroundImage} />
     </KeyboardAvoidingView>
   );
 };
@@ -118,46 +148,86 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#FFFEFB",
   },
-  ballAnimationContainer: {
+  logo: {
+    marginTop: 30,
+  },
+  titleStroke: {
+    fontSize: 100,
+    color: "black",
     position: "absolute",
-    width: "100%",
-    height: "100%",
-    zIndex: 0,
+    textShadowColor: "black",
+    textShadowOffset: { width: 5, height: 5 },
+    textShadowRadius: 10,
+    fontFamily: "McLaren",
+    fontWeight: "bold",
+  },
+  title: {
+    color: "#B36003",
+    fontFamily: "McLaren",
+    fontSize: 100,
+    fontWeight: "bold",
+  },
+  subtitle: {
+    fontFamily: "McLaren",
+    fontSize: 30,
   },
   inputContainer: {
-    width: "50%",
-    marginTop: 200,
+    width: "100%",
+    // flexGrow: 1,
+    // flex: 1,
+    // justifyContent: "center",
+    // alignItems: "center",
+    // marginTop: 20,
+  },
+
+  labelWrap: {
+    alignItems: "flex-end",
+    width: 70,
+  },
+  inputWrap: {
+    flexShrink: 1,
+    alignItems: "center",
+    flexDirection: "row",
   },
   inputRow: {
-    width: "100%",
+    width: "fit-content",
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    marginTop: 40,
+    alignContent: "center",
+    marginTop: 20,
+    marginHorizontal: "auto",
+    transform: [{ translateX: -30 }],
   },
   label: {
-    marginRight: 20,
+    marginRight: 10,
+    textAlign: "right",
+    fontSize: 20,
+    fontWeight: "bold",
   },
   input: {
-    flex: 1,
-    paddingHorizontal: 15,
-    paddingVertical: 20,
-    borderRadius: 15,
-    color: "black",
+    width: 300,
+    paddingHorizontal: 10,
+    paddingVertical: 15,
     fontSize: 18,
     backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: "orange",
+    borderRadius: 20,
   },
   buttonContainer: {
-    width: "30%",
+    width: "100%",
     justifyContent: "center",
     alignItems: "center",
     marginTop: 40,
   },
   button: {
-    backgroundColor: "blue",
-    paddingVertical: 15,
-    paddingHorizontal: 50,
+    backgroundColor: "#AD620E",
+    flexShrink: 1,
+    paddingVertical: 10,
+    paddingHorizontal: 100,
     borderRadius: 20,
     alignItems: "center",
     marginBottom: 20,
@@ -165,6 +235,29 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "white",
     fontWeight: "700",
+    fontSize: 20,
+  },
+  backgroundImage: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: -1,
+  },
+  signUpWrap: {
+    marginTop: 20,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  signUpText: {
+    color: "835717",
+    fontSize: 20,
+  },
+  signUpLink: {
+    color: "#835717",
+    marginLeft: 10,
+    fontWeight: "bold",
     fontSize: 20,
   },
 });
