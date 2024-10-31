@@ -98,7 +98,7 @@ const BookPage = ({ page, isActive, currentMode }) => {
           source={page.animation.image}
           loop={false}
           autoPlay={false}
-          style={{ width: 300, height: 300 }}
+          style={{ width: 500, height: 500 }}
         />
       </TouchableOpacity>
       {page.animation.highlightText ? (
@@ -108,7 +108,7 @@ const BookPage = ({ page, isActive, currentMode }) => {
             source={page.animation.highlightText}
             loop={false}
             autoPlay={false}
-            style={{ width: 500, height: 100 }}
+            style={{ width: 700, height: 100 }}
           />
         </TouchableOpacity>
       ) : (
