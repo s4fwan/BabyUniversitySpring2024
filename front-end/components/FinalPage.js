@@ -2,11 +2,12 @@ import React, { useRef, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import ParentUI from "../screens/ParentUI";
 import picture from "../picture.png";
-import BackButton from "../BookPages/BackButton";
 import { Audio } from "expo-av";
+import { useNavigation } from "@react-navigation/native";
 
 const FinalPage = ({ isActive, currentMode }) => {
   const soundRef = useRef(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     async function loadSound() {
@@ -40,11 +41,13 @@ const FinalPage = ({ isActive, currentMode }) => {
   }, [isActive]);
   return (
     <View style={styles.container}>
-      <BackButton currentMode={currentMode}/>
+      <TouchableOpacity style={styles.BackButton} onPress={()=>navigation.goBack()}>
+        <Image source={require("../assets/img/back.png")} />
+      </TouchableOpacity>
       <Image source={picture} style={styles.pictureImg} />
-      <View style={styles.bodyText}>
+      {/* <View style={styles.bodyText}>
         <Text style={styles.text}>Now you are a quantum physicist.</Text>
-      </View>
+      </View> */}
     </View>
   );
 };
@@ -62,8 +65,8 @@ const styles = StyleSheet.create({
   pictureImg: {
     left: 0,
     bottom: 0,
-    width: 270,
-    height: 250,
+    width: 600,
+    height: 600,
     backgroundColor: "transparent",
   },
   bodyText: {
@@ -92,6 +95,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingVertical: 15,
     paddingHorizontal: 35,
+  },
+  BackButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    width: 50,
+    height: 50,
   },
 });
 
