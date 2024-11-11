@@ -6,6 +6,7 @@ import {
   TextInput,
   View,
   StyleSheet,
+  Dimensions,
   TouchableOpacity,
   KeyboardAvoidingView,
   Image,
@@ -13,6 +14,19 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import intersect from "../assets/img/Intersect.png";
+
+//dimensions for CSS to scale with
+const BASE_WIDTH = 1194;
+const BASE_HEIGHT = 834;
+
+// Get current screen dimensions
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const scaleWidth = screenWidth / BASE_WIDTH;
+const scaleHeight = screenHeight / BASE_HEIGHT;
+const scale = Math.min(scaleWidth, scaleHeight); // Choose the smaller scale factor to maintain aspect ratio
+
+// Helper function to scale sizes
+const scaleSize = (size) => size * scale;
 
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -103,17 +117,16 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   header: {
-    fontSize: 50,
+    fontSize: scaleSize(50),
     fontFamily: "Itim_400Regular",
     color: "#3F3CB4",
-    marginVertical: 20,
+    marginVertical: scaleSize(20),
   },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
-    // paddingVertical: 20,
-    paddingHorizontal: 10,
+    paddingHorizontal: scaleSize(10),
   },
   container: {
     flex: 1,
@@ -123,33 +136,32 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFEFB",
   },
   titleStroke: {
-    fontSize: 100,
+    fontSize: scaleSize(100),
     color: "black",
     position: "absolute",
     textShadowColor: "black",
-    textShadowOffset: { width: 5, height: 5 },
-    textShadowRadius: 10,
+    textShadowOffset: { width: scaleSize(5), height: scaleSize(5) },
+    textShadowRadius: scaleSize(10),
     fontFamily: "McLaren",
     fontWeight: "bold",
   },
   title: {
     color: "#B36003",
     fontFamily: "McLaren",
-    fontSize: 100,
+    fontSize: scaleSize(100),
     fontWeight: "bold",
   },
   subtitle: {
     fontFamily: "McLaren",
-    fontSize: 30,
-    marginBottom: 80,
+    fontSize: scaleSize(30),
+    marginBottom: scaleSize(80),
   },
   inputContainer: {
     width: "100%",
   },
-
   labelWrap: {
     alignItems: "flex-end",
-    width: 80,
+    width: scaleSize(80),
   },
   inputWrap: {
     flexShrink: 1,
@@ -162,28 +174,28 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     alignContent: "center",
-    marginTop: 20,
+    marginTop: scaleSize(20),
     marginHorizontal: "auto",
-    transform: [{ translateX: -30 }],
+    transform: [{ translateX: scaleSize(-30) }],
   },
   label: {
-    marginRight: 10,
+    marginRight: scaleSize(10),
     textAlign: "right",
-    fontSize: 20,
+    fontSize: scaleSize(20),
     fontWeight: "bold",
   },
   input: {
-    width: 300,
-    paddingHorizontal: 10,
-    paddingVertical: 15,
-    fontSize: 18,
+    width: scaleSize(300),
+    paddingHorizontal: scaleSize(10),
+    paddingVertical: scaleSize(15),
+    fontSize: scaleSize(18),
     backgroundColor: "white",
-    borderWidth: 2,
+    borderWidth: scaleSize(2),
     borderColor: "orange",
-    borderRadius: 20,
+    borderRadius: scaleSize(20),
   },
   buttonContainer: {
-    marginTop: 40,
+    marginTop: scaleSize(40),
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
@@ -191,19 +203,18 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#AD620E",
     flexShrink: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 100,
-    borderRadius: 20,
+    paddingVertical: scaleSize(10),
+    paddingHorizontal: scaleSize(100),
+    borderRadius: scaleSize(20),
     alignItems: "center",
   },
   buttonText: {
     color: "white",
     fontWeight: "700",
-    fontSize: 20,
+    fontSize: scaleSize(20),
   },
   errorText: {
-    // marginBottom: 10,
-    fontSize: 18,
+    fontSize: scaleSize(18),
     color: "red",
     fontWeight: "bold",
   },
@@ -216,10 +227,10 @@ const styles = StyleSheet.create({
   },
   BackButton: {
     position: "absolute",
-    top: 40,
-    left: 20,
-    width: 50,
-    height: 50,
+    top: scaleSize(40),
+    left: scaleSize(20),
+    width: scaleSize(50),
+    height: scaleSize(50),
   },
 });
 export default ForgotPin;
