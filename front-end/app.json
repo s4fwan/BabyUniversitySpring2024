@@ -4,7 +4,20 @@
     "slug": "baby-university-app",
     "version": "1.0.0",
     "plugins": [
-        "expo-font"
-    ]
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "732162db-6172-402a-bec5-b76f81a5479f"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/732162db-6172-402a-bec5-b76f81a5479f"
+    },
+    "android": {},
+    "ios": {}
   }
 }

@@ -18,6 +18,7 @@ import CoverPage from "../components/CoverPage";
 import BookPage from "../components/BookPage";
 import QuizPage from "../components/QuizPage";
 import QuizStartPage from "../components/QuizStartPage";
+import DropdownButton from "../components/DropdownButton";
 
 // const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const SwipeBook = (isMuted) => {
@@ -33,45 +34,12 @@ const SwipeBook = (isMuted) => {
 
 
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
-  const audioPaths = {
-    paths: [
-      require("../assets/booksAudio/bookaudio0.mp3"),
-      require("../assets/booksAudio/bookaudio1.mp3"),
-      require("../assets/booksAudio/bookaudio2.mp3"),
-      require("../assets/booksAudio/bookaudio3.mp3"),
-      require("../assets/booksAudio/bookaudio4.mp3"),
-      require("../assets/booksAudio/bookaudio5.mp3"),
-      require("../assets/booksAudio/bookaudio6.mp3"),
-      require("../assets/booksAudio/bookaudio7.mp3"),
-      require("../assets/booksAudio/bookaudio8.mp3"),
-      require("../assets/booksAudio/bookaudio9.mp3"),
-      require("../assets/booksAudio/bookaudio10.mp3"),
-      require("../assets/booksAudio/bookaudio11.mp3"),
-      require("../assets/booksAudio/bookaudio12.mp3"),
-      require("../assets/booksAudio/bookaudio13.mp3"),
-      require("../assets/booksAudio/bookaudio14.mp3"),
-      require("../assets/booksAudio/bookaudio15.mp3"),
-      require("../assets/booksAudio/bookaudio16.mp3"),
-      require("../assets/booksAudio/bookaudio17.mp3"),
-      require("../assets/booksAudio/bookaudio18.mp3"),
-      require("../assets/booksAudio/bookaudio19.mp3"),
-      require("../assets/booksAudio/bookaudio20.mp3"),
-      require("../assets/booksAudio/bookaudio21.mp3"),
-      require("../assets/booksAudio/bookaudio22.mp3"),
-      require("../assets/booksAudio/bookaudio23.mp3"),
-      require("../assets/booksAudio/bookaudio24.mp3"),
-    ],
-  };
 
-  async function playBookSound(index) {
-    if (readAloudVal) {
-      const { sound } = await Audio.Sound.createAsync(
-        audioPaths["paths"][index]
-      );
-      setSound(sound);
-      await sound.playAsync();
-    }
-  }
+
+  const pageInfo = Array.from({ length: bookPages.length }, (_, index) => ({
+    title: `Page ${index + 1}`,
+  }));
+
   useEffect(() => {
     if (carouselRef.current) {
       setTimeout(() => {
@@ -196,8 +164,23 @@ const SwipeBook = (isMuted) => {
   };
 
   const handlePageChange = (index) => {
+    if (index == bookPages.length-1 && currentPage === 1) {
+      carouselRef.current.scrollTo({
+        index: 0,
+        animated: false,
+      });
+      return; 
+    }
+  
+    if (index ==0 && currentPage === bookPages.length) {
+      carouselRef.current.scrollTo({
+        index: currentPage - 1,
+        animated: false,
+      });
+      return; 
+    }
+    
     setCurrentPage(index + 1);
-    // playBookSound(index);
     if (timerId) {
       clearTimeout(timerId);
     }
@@ -208,15 +191,20 @@ const SwipeBook = (isMuted) => {
   };
 
   const handleGoToNextPage = (nextIndex) => {
+    console.log(nextIndex)
     if (carouselRef.current) {
+      setCurrentPage(nextIndex + 1);
       setTimeout(() => {
         carouselRef.current.scrollTo({ index: nextIndex, animated: false });
       }, 500);
-      setCurrentPage(nextIndex + 1);
+      
     }
   };
   return (
     <View style={styles.container}>
+      <View style={styles.dropdownContainer}>
+        <DropdownButton pageInfo={pageInfo} goToNextPage={handleGoToNextPage} currentPage={currentPage} />
+        </View>
       <Carousel
         ref={carouselRef}
         data={bookPages}
@@ -230,6 +218,9 @@ const SwipeBook = (isMuted) => {
                 page={item.page}
                 ref={(el) => (pageRefs.current[index] = el)}
                 isActive={isActive}
+                pageInfo={pageInfo}
+                goToNextPage={handleGoToNextPage}
+                currentIndex={index}
               />
             );
           }
@@ -248,20 +239,6 @@ const SwipeBook = (isMuted) => {
               />
             );
           }
-
-          // {Array.isArray(item.quiz) && item.quiz.map((quizItem, quizIndex) => (
-          //   <QuizPage
-          //     key={quizIndex}
-          //     quiz={quizItem}
-          //     userId={item.userId}
-          //     currentMode={item.currentMode}
-          //     ref={(el) => (pageRefs.current[index] = el)}
-          //     isActive={isActive}
-          //     goToNextPage={() => handleGoToNextPage(index + 1)}
-          //     quizIndex={quizIndex}
-          //   />
-          // ))}
-
           if (item.key === "finalPage") {
             return (
               <FinalPage
@@ -314,11 +291,18 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     width: "100%",
     height: "100%",
+    position: "relative",
   },
   pageContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  dropdownContainer:{
+    position: "absolute",
+    width: "100%",
+    top: "10%",
+    zIndex: 1,
   },
 });
 export default SwipeBook;
