@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,21 +8,40 @@ import {
   Image,
 } from "react-native";
 import axios from "axios";
-import ParentUI from "./ParentUI";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import intersect from "../assets/img/Intersect.png";
 import back from "../assets/img/back.png";
 
 const PinEntryScreen = ({ navigation }) => {
   const [pin, setPin] = useState("");
+  const [userId, setUserId] = useState(null);
   const [error, setError] = useState("");
 
   const handlePinChange = (enteredPin) => {
     setPin(enteredPin);
   };
 
-  function handlePinSubmit() {
-    navigation.navigate("ParentUI");
+  useEffect(() => {
+    async function fetchUserId() {
+      const id = await AsyncStorage.getItem("userId");
+      setUserId(id);
+    }
+
+    fetchUserId();
+  }, []);
+
+  async function handlePinSubmit() {
+    try {
+      await axios.post(`${process.env.BASE_API_URL}/users/check-pin`, {
+        id: userId,
+        pin,
+      });
+      navigation.navigate("ParentUI");
+    } catch (error) {
+      console.error("Error:", error.response?.data?.message || error.message);
+      setError("Incorrect PIN. Please try again.");
+    }
+
     // axios
     //   .get("http://localhost:3000/checkpin", {
     //     params: {
@@ -40,9 +59,8 @@ const PinEntryScreen = ({ navigation }) => {
     //     console.error("Error:", error.response?.data?.message || error.message);
     //     setError("Incorrect PIN. Please try again.");
     //   });
-  };
+  }
 
- 
   const handleGoBack = () => {
     navigation.goBack();
   };
@@ -52,12 +70,14 @@ const PinEntryScreen = ({ navigation }) => {
       <TouchableOpacity style={styles.BackButton} onPress={handleGoBack}>
         <Image source={back} />
       </TouchableOpacity>
-      <Text style={styles.errorText}>{error}</Text>
+
       <View style={styles.titleWrap}>
         <Text style={styles.titleStroke}>Parents Mode</Text>
         <Text style={styles.title}>Parents Mode</Text>
       </View>
       <Text style={styles.subtitle}>Please enter your PIN</Text>
+      <Text style={styles.errorText}>{error}</Text>
+
       <View style={styles.inputWrap}>
         <TextInput
           style={styles.input}
@@ -70,7 +90,7 @@ const PinEntryScreen = ({ navigation }) => {
       </View>
       <Text
         style={{
-          marginTop:10,
+          marginTop: 10,
           fontSize: 24,
           color: "#835717",
           fontWeight: "bold",
@@ -113,7 +133,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "red",
     marginBottom: 20,
-    bottom: 110,
+    textAlign: "center",
+    fontWeight: "bold",
   },
 
   input: {

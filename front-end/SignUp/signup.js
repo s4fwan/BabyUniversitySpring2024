@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { BASE_API_URL } from "@env";
 import {
   Text,
   TextInput,
@@ -46,7 +45,7 @@ const SignupScreen = () => {
     console.log(newErrors);
     if (Object.keys(newErrors).length === 0) {
       try {
-        const requestUrl = `${BASE_API_URL}/users/sign-up`;
+        const requestUrl = `${process.env.BASE_API_URL}/users/sign-up`;
         const requestBody = { email, pin, username: name };
         console.log(requestBody);
         const response = await axios.post(requestUrl, requestBody);

@@ -8,7 +8,6 @@ import {
   useWindowDimensions,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { BASE_API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRoute } from "@react-navigation/native";
 import { Audio } from "expo-av";
@@ -19,6 +18,7 @@ import BookPage from "../components/BookPage";
 import QuizPage from "../components/QuizPage";
 import QuizStartPage from "../components/QuizStartPage";
 import DropdownButton from "../components/DropdownButton";
+import Loading from "../components/Loading";
 
 // const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const SwipeBook = (isMuted) => {
@@ -31,10 +31,9 @@ const SwipeBook = (isMuted) => {
   const route = useRoute();
   const { bookId, currentMode } = route.params;
   const [bookPages, setBookPages] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(true);
 
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
-
 
   const pageInfo = Array.from({ length: bookPages.length }, (_, index) => ({
     title: `Page ${index + 1}`,
@@ -54,11 +53,12 @@ const SwipeBook = (isMuted) => {
   useEffect(() => {
     const fetchBookAndQuizInfo = async () => {
       try {
-        const playQuiz = (await AsyncStorage.getItem("quizVal"))==="true";
+        setIsLoading(true);
+        const playQuiz = (await AsyncStorage.getItem("quizVal")) === "true";
         const userId = await AsyncStorage.getItem("userId");
         const [bookResponse, quizResponse] = await Promise.all([
-          axios.get(`${BASE_API_URL}/books/${bookId}`),
-          axios.get(`${BASE_API_URL}/questions/${bookId}`),
+          axios.get(`${process.env.BASE_API_URL}/books/${bookId}`),
+          axios.get(`${process.env.BASE_API_URL}/questions/${bookId}`),
         ]);
         const bookData = bookResponse.data.pages.map((page, index) => ({
           key: `bookPage${index}`,
@@ -94,6 +94,7 @@ const SwipeBook = (isMuted) => {
         ];
 
         setBookPages(combinedData);
+        setIsLoading(false);
       } catch (e) {
         console.error("Failed to fetch book or quiz info:", e);
       }
@@ -109,7 +110,7 @@ const SwipeBook = (isMuted) => {
       try {
         await AsyncStorage.setItem("bookId", bookId);
         const userId = await AsyncStorage.getItem("userId");
-        const response = await axios.post(`${BASE_API_URL}/tracker-books`, {
+        const response = await axios.post(`${process.env.BASE_API_URL}/tracker-books`, {
           userId,
           bookId,
         });
@@ -148,7 +149,7 @@ const SwipeBook = (isMuted) => {
       const userId = await AsyncStorage.getItem("userId");
       const bookId = await AsyncStorage.getItem("bookId");
       const response = await axios.put(
-        `${BASE_API_URL}/tracker-books/update-current-page`,
+        `${process.env.BASE_API_URL}/tracker-books/update-current-page`,
         {
           userId,
           bookId,
@@ -164,22 +165,22 @@ const SwipeBook = (isMuted) => {
   };
 
   const handlePageChange = (index) => {
-    if (index == bookPages.length-1 && currentPage === 1) {
+    if (index == bookPages.length - 1 && currentPage === 1) {
       carouselRef.current.scrollTo({
         index: 0,
         animated: false,
       });
-      return; 
+      return;
     }
-  
-    if (index ==0 && currentPage === bookPages.length) {
+
+    if (index == 0 && currentPage === bookPages.length) {
       carouselRef.current.scrollTo({
         index: currentPage - 1,
         animated: false,
       });
-      return; 
+      return;
     }
-    
+
     setCurrentPage(index + 1);
     if (timerId) {
       clearTimeout(timerId);
@@ -191,20 +192,26 @@ const SwipeBook = (isMuted) => {
   };
 
   const handleGoToNextPage = (nextIndex) => {
-    console.log(nextIndex)
+    console.log(nextIndex);
     if (carouselRef.current) {
       setCurrentPage(nextIndex + 1);
       setTimeout(() => {
         carouselRef.current.scrollTo({ index: nextIndex, animated: false });
       }, 500);
-      
     }
   };
-  return (
+
+  return isLoading ? (
+    <Loading message="Loading book pages..." />
+  ) : (
     <View style={styles.container}>
       <View style={styles.dropdownContainer}>
-        <DropdownButton pageInfo={pageInfo} goToNextPage={handleGoToNextPage} currentPage={currentPage} />
-        </View>
+        <DropdownButton
+          pageInfo={pageInfo}
+          goToNextPage={handleGoToNextPage}
+          currentPage={currentPage}
+        />
+      </View>
       <Carousel
         ref={carouselRef}
         data={bookPages}
@@ -298,7 +305,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  dropdownContainer:{
+  dropdownContainer: {
     position: "absolute",
     width: "100%",
     top: "10%",

@@ -75,12 +75,11 @@ const QuizPage = ({
       return;
     }
     setSubmitted(true);
-    console.log(`http://localhost:4000/api/v1/tracker-books/update-quiz`);
     const result =
       selectedAnswer === quiz.correctAnswer ? "Correct!" : "Wrong!";
     setMessage(result);
     const response = await axios.put(
-      `http://localhost:4000/api/v1/tracker-books/update-quiz`,
+      `${process.env.BASE_API_URL}/tracker-books/update-quiz`,
       { userId, bookId: quiz.bookId, quizId: quiz._id, selectedAnswer }
     );
   };

@@ -3,8 +3,9 @@ import { View, StyleSheet, SafeAreaView,TouchableOpacity, Image } from "react-na
 import CoverImage from "../assets/img/CoverPage.svg";
 import { useFonts } from "expo-font";
 import { Audio } from "expo-av";
-
+import { useNavigation } from "@react-navigation/native";
 const CoverPage = ({ isActive, currentMode }) => {
+  const navigation = useNavigation();
   const [fontsLoaded] = useFonts({
     "KulimPark-Bold": require("../assets/fonts/KulimPark-Bold.ttf"),
   });

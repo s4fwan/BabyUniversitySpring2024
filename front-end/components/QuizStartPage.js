@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
-import { BASE_API_URL } from "@env";
 import {
   Text,
   TextInput,
@@ -12,8 +10,6 @@ import {
   ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import phyDoodleShapes from "../assets/BgImage/doodle.png";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import intersect from "../assets/img/Intersect.png";
 
 const QuizStartPage = () => {

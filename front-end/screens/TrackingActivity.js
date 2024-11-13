@@ -42,7 +42,7 @@ const PinEntryScreen = ({ navigation }) => {
       if (userId) {
         try {
           const trackingInfo = await axios.get(
-            `http://localhost:4000/api/v1/tracker-books/${userId}/${book[0].bookId}`
+            `${process.env.BASE_API_URL}/tracker-books/${userId}/${book[0].bookId}`
           );
           console.log("UserId:", userId);
           const nonNullAnswers = trackingInfo.data.quizTrack.filter(

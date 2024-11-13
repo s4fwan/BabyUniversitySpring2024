@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { BASE_API_URL } from "@env";
 import intersect from "../assets/img/Intersect.png";
 import {
   Text,
@@ -44,7 +43,7 @@ const ChangePinScreen = () => {
       try {
         const userId = await AsyncStorage.getItem("userId");
         console.log({ userId, oldPin, newPin });
-        const response = await axios.put(`${BASE_API_URL}/users/change-pin`, { userId, oldPin, newPin });
+        const response = await axios.put(`${process.env.BASE_API_URL}/users/change-pin`, { userId, oldPin, newPin });
         Alert.alert(
           "Success",
           "Your PIN has been changed successfully!",
