@@ -43,6 +43,19 @@
    
    `cd BabyUniversitySpring2024`
 
+### Backend
+
+1. Navigate to backend directory
+   
+   `cd back-end`
+
+2. Install required dependencies
+
+    `npm i`
+   
+3. Run server
+     `node server.js`
+
 ### Frontend
 
 1. Navigate to frontend directory
@@ -65,13 +78,3 @@
 5. For Windows users:
    1. Download Expo Go on your iOS or Android phone
    2. Scan QR code in terminal
-
-### Backend
-
-1. Navigate to frontend directory
-   
-   `cd back-end`
-
-2. Install required dependencies
-
-    `npm i`
