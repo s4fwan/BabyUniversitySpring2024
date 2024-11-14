@@ -28,11 +28,11 @@ const ForgotPin = () => {
     else if (!validateEmail(email)) newErrors.email = "Enter a valid email";
 
     setErrors(newErrors);
-    console.log(newErrors);
     if (Object.keys(newErrors).length === 0) {
       try {
         const requestUrl = `${process.env.BASE_API_URL}/otp/generate-otp`;
         const requestBody = { email:email.toLowerCase() };
+        console.log(requestBody)
         await axios.post(requestUrl, requestBody);
         console.log(requestBody);
         navigation.replace("OTPVerification", { email:email.toLowerCase() });

@@ -50,12 +50,14 @@ const ChangePinScreen = () => {
           [
             {
               text: "OK",
-              onPress: () => navigation.replace("Bedroom"),
+              onPress: () => navigation.replace("Bedroom", { currentMode: "parents" }),
             }
           ]
         );
       } catch (error) {
-        setErrors({ general: error.message });
+        if(error.response){
+          setErrors({ general: error.response.data.message });
+        }
       }
     }
   };
@@ -81,6 +83,7 @@ const ChangePinScreen = () => {
                 style={styles.input}
                 placeholder="Enter your old PIN"
                 value={oldPin}
+                secureTextEntry
                 onChangeText={(pin) => setOldPin(pin)}
               />
               
@@ -98,6 +101,7 @@ const ChangePinScreen = () => {
                 style={styles.input}
                 placeholder="Enter your new PIN"
                 value={newPin}
+                secureTextEntry
                 onChangeText={(pin) => setNewPin(pin)}
               />
               {errors.newPin && (
@@ -243,8 +247,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   errorText: {
-    position: "absolute",
-    left:310,
+    marginTop:20,
     fontSize: 18,
     color: "red",
     fontWeight: "bold",

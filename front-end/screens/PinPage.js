@@ -88,6 +88,7 @@ const PinEntryScreen = ({ navigation }) => {
           secureTextEntry
         />
       </View>
+      <TouchableOpacity onPress={() => navigation.navigate("ForgotPin")}>
       <Text
         style={{
           marginTop: 10,
@@ -98,6 +99,7 @@ const PinEntryScreen = ({ navigation }) => {
       >
         Forgot Pin
       </Text>
+      </TouchableOpacity>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={handlePinSubmit}>
           <Text style={styles.buttonText}>Switch to Parents Mode</Text>

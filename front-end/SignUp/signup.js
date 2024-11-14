@@ -53,7 +53,8 @@ const SignupScreen = () => {
         await AsyncStorage.setItem("username", response.data.username);
         navigation.replace("Bedroom",{currentMode: "kids"});
       } catch (error) {
-        setErrors({ general: error.message });
+        if(error.response)
+          setErrors({ general: error.response.data.message });
       }
     }
   };
@@ -245,8 +246,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   errorText: {
-    position: "absolute",
-    left:310,
+    // position: "absolute",
+    // left:310,
+    marginTop:20,
     fontSize: 18,
     color: "red",
     fontWeight: "bold",
