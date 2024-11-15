@@ -1,8 +1,10 @@
 # Baby University
+41113 Software Development Studio - Spring 2024
 
-## Client: Dr Christopher Ferrie
+## Client
+Dr Christopher Ferrie
 
-## Team - Contributors
+## Team
 - **Jasmine Trinh** - 14347746
 - **Safwan Abrar** - 25442649
 - **Theo Pham** - 24881031
@@ -10,6 +12,9 @@
 - **Ethan Chow** - 14276909
 - **Alessandro Campidoglio** - 24954012
 - **Osasere Eguaibor** - 13623549
+
+## Project Description
+This project aims to transform Chris Ferrie’s science board books into an engaging mobile application for young children. Baby University lets users navigate through Chris' popular book, 'Quantum Physics for Babies'. Fluid animations and narration bring the pages to life, and together with a quiz, bring an exciting learning opportunity for babies.
 
 ## How to Contribute
 
@@ -43,6 +48,20 @@
    
    `cd BabyUniversitySpring2024`
 
+### Backend
+
+1. Navigate to backend directory
+   
+   `cd back-end`
+
+2. Install required dependencies
+
+    `npm i`
+   
+3. Run server
+
+     `node server.js`
+
 ### Frontend
 
 1. Navigate to frontend directory
@@ -53,25 +72,15 @@
 
     `npm i`
 
-3. Run app in Expo
+3. Start application in Expo
    
    `npm start` or `npx expo start`
 
-4. For MacOS users:
-   1. Download Xcode from AppStore
-   2. In terminal `SHIFT + I`
-   3. Select iPad Pro(11-inch) (4th Generation) then `ENTER`
-
-5. For Windows users:
-   1. Download Expo Go on your iOS or Android phone
-   2. Scan QR code in terminal
-
-### Backend
-
-1. Navigate to frontend directory
-   
-   `cd back-end`
-
-2. Install required dependencies
-
-    `npm i`
+4. Run simulator on computer - **macOS only**
+   1. Install Xcode
+   2. In the terminal `i`
+   3. Select an iOS device and `ENTER`
+      
+5. Run simulator on mobile device - **macOS and Windows**
+   1. Download Expo Go on your iOS or Android device
+   2. Scan QR code displayed in the terminal on your computer
