@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import BackButton from "../BookPages/BackButton";
+import BackButton from "./BackButton";
 import {
   View,
   Text,

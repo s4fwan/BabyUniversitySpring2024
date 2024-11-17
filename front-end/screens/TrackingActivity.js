@@ -65,7 +65,6 @@ const PinEntryScreen = ({ navigation }) => {
           const correctAnswers = nonNullAnswers.filter(
             (track) => track.selectedAnswer === track.question.correctAnswer
           );
-          console.log(trackingInfo.data)
           setNonNullAnswers(nonNullAnswers.length);
           setCorrectAnswers(correctAnswers.length);
           setBookPageCount(trackingInfo.data.bookPageCount);
@@ -95,7 +94,7 @@ const PinEntryScreen = ({ navigation }) => {
           <Text style={styles.activityTitle}>
             Name: Quantum Physics for babies
           </Text>
-          <Text style={styles.activityDescription}>Reading progress: {currentPage}/{bookPageCount}</Text>
+          <Text style={styles.activityDescription}>Reading progress: {currentPage}/{bookPageCount+5}</Text>
           <Text style={styles.activityDescription}>Quizzes's progress: {nonNullAnswers}/{numsOfQuiz}</Text>
           <Text style={styles.activityDescription}>Correct answers: {correctAnswers}/{numsOfQuiz}</Text>
         </View>

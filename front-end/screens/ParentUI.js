@@ -14,7 +14,7 @@ import intersect from "../assets/img/Intersect.png";
 import back from "../assets/img/back.png";
 import BrowseBooks from "../assets/img/BrowseBook.png";
 import ActivityTracking from "../assets/img/ActivityTracking.png";
-import MenuButton from "../MenuButton";
+import MenuButton from "../components/MenuButton";
 
 //dimensions for CSS to scale with
 const BASE_WIDTH = 1194;

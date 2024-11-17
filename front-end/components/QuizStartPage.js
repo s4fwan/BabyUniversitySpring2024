@@ -26,7 +26,7 @@ const QuizStartPage = () => {
           <Text style={styles.title}>Quiz Time!</Text>
         </View>
        
-        <View style={styles.buttonContainer}>
+        {/* <View style={styles.buttonContainer}>
           <TouchableOpacity onPress={handleNextPage} style={styles.button}>
             <Text style={styles.buttonText}>Next</Text>
           </TouchableOpacity>
@@ -36,7 +36,7 @@ const QuizStartPage = () => {
             <Text style={styles.buttonText}>Back to last page</Text>
           </TouchableOpacity>
         </View>
-        
+         */}
         <Image source={intersect} style={styles.backgroundImage} />
       </KeyboardAvoidingView>
   );

@@ -3,14 +3,14 @@ import { View, TouchableOpacity, Text, StyleSheet, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 // Import your images using ES6 import syntax
-import userIcon from "./assets/menuImages/userIcon.png";
-import settingsIcon from "./assets/menuImages/settings.png";
-import kidIcon from "./assets/menuImages/kidIcon.png";
-import logoutIcon from "./assets/menuImages/logoutIcon.png";
-import toggleButtonIcon from "./assets/menuImages/toggleButton.png";
-import ChangePin from "./assets/menuImages/changePin.png";
-import parentsIcon from "./assets/menuImages/parents.png";
-import BackIcon from "./assets/menuImages/BackIcon.png";
+import userIcon from "../assets/menuImages/userIcon.png";
+import settingsIcon from "../assets/menuImages/settings.png";
+import kidIcon from "../assets/menuImages/kidIcon.png";
+import logoutIcon from "../assets/menuImages/logoutIcon.png";
+import toggleButtonIcon from "../assets/menuImages/toggleButton.png";
+import ChangePin from "../assets/menuImages/changePin.png";
+import parentsIcon from "../assets/menuImages/parents.png";
+import BackIcon from "../assets/menuImages/BackIcon.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MenuButton = ({ userMode, isBrowsingBook }) => {
