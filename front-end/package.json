@@ -27,6 +27,7 @@
     "expo-updates": "^0.26.7",
     "express": "^4.18.3",
     "firebase": "^10.10.0",
+    "graphql": "^16.9.0",
     "lottie-react-native": "^7.0.0",
     "open": "^9.0.0",
     "react": "^18.3.1",
