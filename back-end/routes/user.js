@@ -7,6 +7,7 @@ const welcomeEmailText = require("../utils/WelcomeEmailText");
 const hashPin = require("../utils/HashPin");
 const OTP = require("../models/OTP");
 const { verifyOTP } = require("../utils/OTPService");
+const mongoose = require("mongoose");
 
 router.post("/sign-up", async (req, res) => {
   const transporter = nodemailer.createTransport({
@@ -106,6 +107,27 @@ router.put("/reset-pin", async (req, res) => {
       await OTP.deleteMany({ email });
       res.status(200).json({ message: "PIN reset successfully" });
     }
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/check-pin", async (req, res) => {
+  const {id, pin } = req.body;
+  const userId = new mongoose.Types.ObjectId(id);
+  try {
+    const user = await User.findById(userId );
+    console.log(user);
+    if (!user) {
+      return res.status(400).json({ message: "Invalid user" });
+    }
+    const isMatch = await bcrypt.compare(pin, user.pin);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Wrong pin" });
+    }
+    res.status(200).json({
+      message: "Enter parents mode successfully",
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

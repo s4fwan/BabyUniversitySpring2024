@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { BASE_API_URL } from "@env";
 import {
   Text,
   TextInput,
@@ -42,7 +41,7 @@ const OTPVerification = () => {
 
   const handleResendOTP = async () => {
     try {
-      const requestUrl = `${BASE_API_URL}/otp/generate-otp`;
+      const requestUrl = `${process.env.BASE_API_URL}/otp/generate-otp`;
       const requestBody = { email };
       await axios.post(requestUrl, requestBody);
     } catch (error) {
@@ -57,7 +56,7 @@ const OTPVerification = () => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length === 0) {
       try {
-        const requestUrl = `${BASE_API_URL}/otp/verify-otp`;
+        const requestUrl = `${process.env.BASE_API_URL}/otp/verify-otp`;
         const requestBody = { email, otp };
         const response = await axios.post(requestUrl, requestBody);
         if (response.data.success) navigation.replace("ResetPin",{email,otp});

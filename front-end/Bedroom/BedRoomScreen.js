@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import SwipeBook from "../screens/SwipeBook";
 import books from "../data/book";
 import {
   StyleSheet,
@@ -10,9 +9,7 @@ import {
   Dimensions,
 } from "react-native";
 import MenuButton from "../MenuButton";
-import LogoutSuccessful from "../Logout Page";
-import { useFonts, Itim_400Regular } from "@expo-google-fonts/itim";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import { useRoute } from "@react-navigation/native";
 
 const BedRoomScreen = ({ navigation }) => {

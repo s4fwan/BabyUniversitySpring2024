@@ -12,7 +12,6 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
-import { BASE_API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import intersect from "../assets/img/Intersect.png";
 
@@ -61,10 +60,9 @@ const LoginScreen = () => {
   };
 
   const handleLogin =  () => {
-    console.log(`${BASE_API_URL}/users/sign-in`);
     setIsLoginClicked(true);
     axios
-      .post(`${BASE_API_URL}/users/sign-in`, { email, pin })
+      .post(`${process.env.BASE_API_URL}/users/sign-in`, { email, pin })
       .then(async (response) => {
         if (response.status === 200) {
           await AsyncStorage.setItem("userId", response.data.userId);
@@ -76,8 +74,8 @@ const LoginScreen = () => {
         }
       })
       .catch((error) => {
-        console.error("Error:", error);
-        alert("An error occurred while logging in");
+        if(error.response)
+          alert(error.response.data.message);
       })
       .finally(() => setIsLoginClicked(false));
   };

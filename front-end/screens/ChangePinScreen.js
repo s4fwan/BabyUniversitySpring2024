@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { BASE_API_URL } from "@env";
 import intersect from "../assets/img/Intersect.png";
 import {
   Text,
@@ -58,19 +57,21 @@ const ChangePinScreen = () => {
       try {
         const userId = await AsyncStorage.getItem("userId");
         console.log({ userId, oldPin, newPin });
-        const response = await axios.put(`${BASE_API_URL}/users/change-pin`, { userId, oldPin, newPin });
+        const response = await axios.put(`${process.env.BASE_API_URL}/users/change-pin`, { userId, oldPin, newPin });
         Alert.alert(
           "Success",
           "Your PIN has been changed successfully!",
           [
             {
               text: "OK",
-              onPress: () => navigation.replace("Bedroom"),
+              onPress: () => navigation.replace("Bedroom", { currentMode: "parents" }),
             }
           ]
         );
       } catch (error) {
-        setErrors({ general: error.message });
+        if(error.response){
+          setErrors({ general: error.response.data.message });
+        }
       }
     }
   };
@@ -96,6 +97,7 @@ const ChangePinScreen = () => {
                 style={styles.input}
                 placeholder="Enter your old PIN"
                 value={oldPin}
+                secureTextEntry
                 onChangeText={(pin) => setOldPin(pin)}
               />
               
@@ -113,6 +115,7 @@ const ChangePinScreen = () => {
                 style={styles.input}
                 placeholder="Enter your new PIN"
                 value={newPin}
+                secureTextEntry
                 onChangeText={(pin) => setNewPin(pin)}
               />
               {errors.newPin && (
@@ -256,9 +259,8 @@ const styles = StyleSheet.create({
     fontSize: scaleSize(20),
   },
   errorText: {
-    position: "absolute",
-    left: scaleSize(310),
-    fontSize: scaleSize(18),
+    marginTop:20,
+    fontSize: 18,
     color: "red",
     fontWeight: "bold",
   },

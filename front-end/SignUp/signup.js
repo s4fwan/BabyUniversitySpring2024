@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { BASE_API_URL } from "@env";
 import {
   Text,
   TextInput,
@@ -60,7 +59,7 @@ const SignupScreen = () => {
     console.log(newErrors);
     if (Object.keys(newErrors).length === 0) {
       try {
-        const requestUrl = `${BASE_API_URL}/users/sign-up`;
+        const requestUrl = `${process.env.BASE_API_URL}/users/sign-up`;
         const requestBody = { email, pin, username: name };
         console.log(requestBody);
         const response = await axios.post(requestUrl, requestBody);
@@ -68,7 +67,8 @@ const SignupScreen = () => {
         await AsyncStorage.setItem("username", response.data.username);
         navigation.replace("Bedroom",{currentMode: "kids"});
       } catch (error) {
-        setErrors({ general: error.message });
+        if(error.response)
+          setErrors({ general: error.response.data.message });
       }
     }
   };
@@ -259,9 +259,10 @@ const styles = StyleSheet.create({
     fontSize: scaleSize(20),
   },
   errorText: {
-    position: "absolute",
-    left: scaleSize(310),
-    fontSize: scaleSize(18),
+    // position: "absolute",
+    // left:310,
+    marginTop:20,
+    fontSize: 18,
     color: "red",
     fontWeight: "bold",
   },

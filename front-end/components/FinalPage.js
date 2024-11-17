@@ -13,7 +13,7 @@ const FinalPage = ({ isActive, currentMode }) => {
     async function loadSound() {
       try {
         const { sound } = await Audio.Sound.createAsync({
-          uri: "https://storage.googleapis.com/tavola-italiano-res/sound/BookAudioPage24.mp3",
+          uri: "https://storage.googleapis.com/tavola-italiano-res/Narration/BookAudioPage24.m4a",
         });
         soundRef.current = sound;
         if (isActive) {

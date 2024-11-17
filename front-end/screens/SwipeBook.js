@@ -8,7 +8,6 @@ import {
   useWindowDimensions,
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { BASE_API_URL } from "@env";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRoute } from "@react-navigation/native";
 import { Audio } from "expo-av";
@@ -18,6 +17,8 @@ import CoverPage from "../components/CoverPage";
 import BookPage from "../components/BookPage";
 import QuizPage from "../components/QuizPage";
 import QuizStartPage from "../components/QuizStartPage";
+import DropdownButton from "../components/DropdownButton";
+import Loading from "../components/Loading";
 
 //dimensions for CSS to scale with
 const BASE_WIDTH = 1194;
@@ -43,48 +44,14 @@ const SwipeBook = (isMuted) => {
   const route = useRoute();
   const { bookId, currentMode } = route.params;
   const [bookPages, setBookPages] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(true);
 
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
-  const audioPaths = {
-    paths: [
-      require("../assets/booksAudio/bookaudio0.mp3"),
-      require("../assets/booksAudio/bookaudio1.mp3"),
-      require("../assets/booksAudio/bookaudio2.mp3"),
-      require("../assets/booksAudio/bookaudio3.mp3"),
-      require("../assets/booksAudio/bookaudio4.mp3"),
-      require("../assets/booksAudio/bookaudio5.mp3"),
-      require("../assets/booksAudio/bookaudio6.mp3"),
-      require("../assets/booksAudio/bookaudio7.mp3"),
-      require("../assets/booksAudio/bookaudio8.mp3"),
-      require("../assets/booksAudio/bookaudio9.mp3"),
-      require("../assets/booksAudio/bookaudio10.mp3"),
-      require("../assets/booksAudio/bookaudio11.mp3"),
-      require("../assets/booksAudio/bookaudio12.mp3"),
-      require("../assets/booksAudio/bookaudio13.mp3"),
-      require("../assets/booksAudio/bookaudio14.mp3"),
-      require("../assets/booksAudio/bookaudio15.mp3"),
-      require("../assets/booksAudio/bookaudio16.mp3"),
-      require("../assets/booksAudio/bookaudio17.mp3"),
-      require("../assets/booksAudio/bookaudio18.mp3"),
-      require("../assets/booksAudio/bookaudio19.mp3"),
-      require("../assets/booksAudio/bookaudio20.mp3"),
-      require("../assets/booksAudio/bookaudio21.mp3"),
-      require("../assets/booksAudio/bookaudio22.mp3"),
-      require("../assets/booksAudio/bookaudio23.mp3"),
-      require("../assets/booksAudio/bookaudio24.mp3"),
-    ],
-  };
 
-  async function playBookSound(index) {
-    if (readAloudVal) {
-      const { sound } = await Audio.Sound.createAsync(
-        audioPaths["paths"][index]
-      );
-      setSound(sound);
-      await sound.playAsync();
-    }
-  }
+  const pageInfo = Array.from({ length: bookPages.length }, (_, index) => ({
+    title: `Page ${index + 1}`,
+  }));
+
   useEffect(() => {
     if (carouselRef.current) {
       setTimeout(() => {
@@ -99,11 +66,12 @@ const SwipeBook = (isMuted) => {
   useEffect(() => {
     const fetchBookAndQuizInfo = async () => {
       try {
-        const playQuiz = (await AsyncStorage.getItem("quizVal"))==="true";
+        setIsLoading(true);
+        const playQuiz = (await AsyncStorage.getItem("quizVal")) === "true";
         const userId = await AsyncStorage.getItem("userId");
         const [bookResponse, quizResponse] = await Promise.all([
-          axios.get(`${BASE_API_URL}/books/${bookId}`),
-          axios.get(`${BASE_API_URL}/questions/${bookId}`),
+          axios.get(`${process.env.BASE_API_URL}/books/${bookId}`),
+          axios.get(`${process.env.BASE_API_URL}/questions/${bookId}`),
         ]);
         const bookData = bookResponse.data.pages.map((page, index) => ({
           key: `bookPage${index}`,
@@ -139,6 +107,7 @@ const SwipeBook = (isMuted) => {
         ];
 
         setBookPages(combinedData);
+        setIsLoading(false);
       } catch (e) {
         console.error("Failed to fetch book or quiz info:", e);
       }
@@ -154,7 +123,7 @@ const SwipeBook = (isMuted) => {
       try {
         await AsyncStorage.setItem("bookId", bookId);
         const userId = await AsyncStorage.getItem("userId");
-        const response = await axios.post(`${BASE_API_URL}/tracker-books`, {
+        const response = await axios.post(`${process.env.BASE_API_URL}/tracker-books`, {
           userId,
           bookId,
         });
@@ -193,7 +162,7 @@ const SwipeBook = (isMuted) => {
       const userId = await AsyncStorage.getItem("userId");
       const bookId = await AsyncStorage.getItem("bookId");
       const response = await axios.put(
-        `${BASE_API_URL}/tracker-books/update-current-page`,
+        `${process.env.BASE_API_URL}/tracker-books/update-current-page`,
         {
           userId,
           bookId,
@@ -209,8 +178,23 @@ const SwipeBook = (isMuted) => {
   };
 
   const handlePageChange = (index) => {
+    if (index == bookPages.length - 1 && currentPage === 1) {
+      carouselRef.current.scrollTo({
+        index: 0,
+        animated: false,
+      });
+      return;
+    }
+
+    if (index == 0 && currentPage === bookPages.length) {
+      carouselRef.current.scrollTo({
+        index: currentPage - 1,
+        animated: false,
+      });
+      return;
+    }
+
     setCurrentPage(index + 1);
-    // playBookSound(index);
     if (timerId) {
       clearTimeout(timerId);
     }
@@ -221,15 +205,26 @@ const SwipeBook = (isMuted) => {
   };
 
   const handleGoToNextPage = (nextIndex) => {
+    console.log(nextIndex);
     if (carouselRef.current) {
+      setCurrentPage(nextIndex + 1);
       setTimeout(() => {
         carouselRef.current.scrollTo({ index: nextIndex, animated: false });
       }, 500);
-      setCurrentPage(nextIndex + 1);
     }
   };
-  return (
+
+  return isLoading ? (
+    <Loading message="Loading book pages..." />
+  ) : (
     <View style={styles.container}>
+      <View style={styles.dropdownContainer}>
+        <DropdownButton
+          pageInfo={pageInfo}
+          goToNextPage={handleGoToNextPage}
+          currentPage={currentPage}
+        />
+      </View>
       <Carousel
         ref={carouselRef}
         data={bookPages}
@@ -243,6 +238,9 @@ const SwipeBook = (isMuted) => {
                 page={item.page}
                 ref={(el) => (pageRefs.current[index] = el)}
                 isActive={isActive}
+                pageInfo={pageInfo}
+                goToNextPage={handleGoToNextPage}
+                currentIndex={index}
               />
             );
           }
@@ -261,20 +259,6 @@ const SwipeBook = (isMuted) => {
               />
             );
           }
-
-          // {Array.isArray(item.quiz) && item.quiz.map((quizItem, quizIndex) => (
-          //   <QuizPage
-          //     key={quizIndex}
-          //     quiz={quizItem}
-          //     userId={item.userId}
-          //     currentMode={item.currentMode}
-          //     ref={(el) => (pageRefs.current[index] = el)}
-          //     isActive={isActive}
-          //     goToNextPage={() => handleGoToNextPage(index + 1)}
-          //     quizIndex={quizIndex}
-          //   />
-          // ))}
-
           if (item.key === "finalPage") {
             return (
               <FinalPage
@@ -327,11 +311,18 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     width: "100%",
     height: "100%",
+    position: "relative",
   },
   pageContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  dropdownContainer: {
+    position: "absolute",
+    width: "100%",
+    top: "10%",
+    zIndex: 1,
   },
 });
 export default SwipeBook;

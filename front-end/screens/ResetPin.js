@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { BASE_API_URL } from "@env";
 import {
   Text,
   TextInput,
@@ -58,7 +57,7 @@ const ResetPin = () => {
     console.log(newErrors);
     if (Object.keys(newErrors).length === 0) {
       try {
-        const requestUrl = `${BASE_API_URL}/users/reset-pin`;
+        const requestUrl = `${process.env.BASE_API_URL}/users/reset-pin`;
         const requestBody = { email, otp, newPin };
         const response = await axios.put(requestUrl, requestBody);
         navigation.replace("Login");
@@ -90,6 +89,7 @@ const ResetPin = () => {
                 placeholder="Enter your new PIN"
                 value={newPin}
                 onChangeText={(pin) => setNewPin(pin)}
+                secureTextEntry={true}
               />
 
               {errors.newPin && (
@@ -109,6 +109,7 @@ const ResetPin = () => {
                 placeholder="Enter your confirm PIN"
                 value={confirmPin}
                 onChangeText={(pin) => setConfirmPin(pin)}
+                secureTextEntry={true}
               />
 
               {errors.confirmPin && (
