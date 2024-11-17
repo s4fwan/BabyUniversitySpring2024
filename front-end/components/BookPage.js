@@ -5,8 +5,7 @@ import LottieView from "lottie-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Audio } from "expo-av";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SelectDropdown from "react-native-select-dropdown";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
 
 const BookPage = ({ page, isActive, goToNextPage, pageInfo }) => {
   const navigation = useNavigation();

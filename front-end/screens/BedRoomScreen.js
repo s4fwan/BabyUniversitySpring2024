@@ -8,7 +8,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-import MenuButton from "../MenuButton";
+import MenuButton from "../components/MenuButton";
 
 import { useRoute } from "@react-navigation/native";
 

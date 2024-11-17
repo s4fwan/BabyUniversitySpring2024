@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -13,8 +12,6 @@ import SwipeBook from './screens/SwipeBook';
 import ForgotPin from './screens/ForgotPin';
 import OTPVerification from './screens/OTPVerification';
 import ResetPin from './screens/ResetPin';
-import LogoutSuccessful from './Logout Page';
-import UsernameDisplay from './UserName'
 import SettingsScreen from './screens/SettingScreen'
 
 // import { ReadAloudProvider } from './SettingsScreen/Storage';
@@ -29,13 +26,11 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
-        <Stack.Screen options={{ headerShown: false }} name="Logout" component={LogoutSuccessful} />
         <Stack.Screen options={{ headerShown: false }} name="SignUp" component={SignupScreen} />
         <Stack.Screen options={{ headerShown: false }} name="Bedroom" component={BedRoomScreen} />
         <Stack.Screen options={{ headerShown: false }} name='SwipeBook' component={SwipeBook} />
         <Stack.Screen options={{ headerShown: false }} name="PinEntry" component={PinEntryScreen} />
         <Stack.Screen options={{ headerShown: false }} name="ParentUI" component={ParentUI} />
-        <Stack.Screen options={{ headerShown: false }} name="UserName" component={UsernameDisplay} />
         <Stack.Screen options={{ headerShown: false }} name="Settings" component={SettingsScreen} />
         <Stack.Screen options={{ headerShown: false }} name="ChangePin" component={ChangePin} />
         <Stack.Screen options={{ headerShown: false }} name="TrackingActivity" component={TrackingActivity} />

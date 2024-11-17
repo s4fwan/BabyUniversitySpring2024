@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import ParentUI from "../screens/ParentUI";
-import picture from "../picture.png";
+import picture from "../assets/img/FinalPageImage.png";
+
 import { Audio } from "expo-av";
 import { useNavigation } from "@react-navigation/native";
 

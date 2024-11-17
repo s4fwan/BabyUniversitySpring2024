@@ -11,7 +11,6 @@ import Carousel from "react-native-reanimated-carousel";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRoute } from "@react-navigation/native";
 import { Audio } from "expo-av";
-import { useReadAloud } from "../SettingsScreen/Storage";
 import FinalPage from "../components/FinalPage";
 import CoverPage from "../components/CoverPage";
 import BookPage from "../components/BookPage";
@@ -25,7 +24,6 @@ const SwipeBook = (isMuted) => {
   const carouselRef = useRef(null);
   const pageRefs = useRef([]);
   const [sound, setSound] = useState();
-  const { readAloudVal } = useReadAloud();
   const [currentPage, setCurrentPage] = useState(0);
   const [timerId, setTimerId] = useState(null);
   const route = useRoute();
