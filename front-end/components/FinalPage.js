@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import picture from "../assets/img/FinalPageImage.png";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from "expo-av";
 import { useNavigation } from "@react-navigation/native";
 

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, SafeAreaView,TouchableOpacity, Image } from "react-native";
 import CoverImage from "../assets/img/CoverPage.svg";
 import { useFonts } from "expo-font";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from "expo-av";
 import { useNavigation } from "@react-navigation/native";
 const CoverPage = ({ isActive, currentMode }) => {
@@ -11,16 +12,18 @@ const CoverPage = ({ isActive, currentMode }) => {
   });
   const [playReadAloud, setPlayReadAloud] = useState(false);
   const soundRef = useRef(null);
-
-
   useEffect(() => {
-    async function checkSettings(){
-      const readAloudVal = await AsyncStorage.getItem("readAloudVal");
-      if (readAloudVal) setPlayReadAloud(readAloudVal === "true");
+    async function checkSettings() {
+      try {
+        const readAloudVal = await AsyncStorage.getItem("readAloudVal");
+        console.log(readAloudVal);
+        if (readAloudVal) setPlayReadAloud(readAloudVal === "true");
+      } catch (error) {
+        console.error("Error fetching readAloudVal:", error);
+      }
     }
     checkSettings();
-  },[])
-
+  }, []);
   useEffect(() => {
     async function loadSound() {
       try {

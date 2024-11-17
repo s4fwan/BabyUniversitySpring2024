@@ -45,7 +45,6 @@ const SwipeBook = (isMuted) => {
   const [isLoading, setIsLoading] = useState(true);
   const [playSoundEffect, setPlaySoundEffect] = useState(true);
   
-
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
   const pageInfo = Array.from({ length: bookPages.length }, (_, index) => ({
