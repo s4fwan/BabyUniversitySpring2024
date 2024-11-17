@@ -4,8 +4,8 @@ import {
   Text,
   View,
   TextInput,
-  
   StyleSheet,
+  Dimensions,
   KeyboardAvoidingView,
   TouchableOpacity,
   Image,
@@ -14,6 +14,19 @@ import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import intersect from "../assets/img/Intersect.png";
+
+//dimensions for CSS to scale with
+const BASE_WIDTH = 1194;
+const BASE_HEIGHT = 834;
+
+// Get current screen dimensions
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const scaleWidth = screenWidth / BASE_WIDTH;
+const scaleHeight = screenHeight / BASE_HEIGHT;
+const scale = Math.min(scaleWidth, scaleHeight); // Choose the smaller scale factor to maintain aspect ratio
+
+// Helper function to scale sizes
+const scaleSize = (size) => size * scale;
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -109,8 +122,9 @@ const LoginScreen = () => {
             <Text
               style={{
                 position: "absolute",
-                right: -120,
-                fontSize: 24,
+                //right: scaleSize(-120),
+                left: scaleSize(20),
+                fontSize: scaleSize(24),
                 color: "#835717",
                 fontWeight: "bold",
               }}
@@ -149,40 +163,34 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFEFB",
   },
   logo: {
-    marginTop: 30,
+    marginTop: scaleSize(30),
   },
   titleStroke: {
-    fontSize: 100,
+    fontSize: scaleSize(100),
     color: "black",
     position: "absolute",
     textShadowColor: "black",
-    textShadowOffset: { width: 5, height: 5 },
-    textShadowRadius: 10,
+    textShadowOffset: { width: scaleSize(5), height: scaleSize(5) },
+    textShadowRadius: scaleSize(10),
     fontFamily: "McLaren",
     fontWeight: "bold",
   },
   title: {
     color: "#B36003",
     fontFamily: "McLaren",
-    fontSize: 100,
+    fontSize: scaleSize(100),
     fontWeight: "bold",
   },
   subtitle: {
     fontFamily: "McLaren",
-    fontSize: 30,
+    fontSize: scaleSize(30),
   },
   inputContainer: {
     width: "100%",
-    // flexGrow: 1,
-    // flex: 1,
-    // justifyContent: "center",
-    // alignItems: "center",
-    // marginTop: 20,
   },
-
   labelWrap: {
     alignItems: "flex-end",
-    width: 70,
+    width: scaleSize(70),
   },
   inputWrap: {
     flexShrink: 1,
@@ -195,45 +203,45 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     alignContent: "center",
-    marginTop: 20,
+    marginTop: scaleSize(20),
     marginHorizontal: "auto",
-    transform: [{ translateX: -30 }],
+    transform: [{ translateX: scaleSize(-30) }],
   },
   label: {
-    marginRight: 10,
+    marginRight: scaleSize(10),
     textAlign: "right",
-    fontSize: 20,
+    fontSize: scaleSize(20),
     fontWeight: "bold",
   },
   input: {
-    width: 300,
-    paddingHorizontal: 10,
-    paddingVertical: 15,
-    fontSize: 18,
+    width: scaleSize(300),
+    paddingHorizontal: scaleSize(10),
+    paddingVertical: scaleSize(15),
+    fontSize: scaleSize(18),
     backgroundColor: "white",
-    borderWidth: 2,
+    borderWidth: scaleSize(2),
     borderColor: "orange",
-    borderRadius: 20,
+    borderRadius: scaleSize(20),
   },
   buttonContainer: {
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 40,
+    marginTop: scaleSize(40),
   },
   button: {
     backgroundColor: "#AD620E",
     flexShrink: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 100,
-    borderRadius: 20,
+    paddingVertical: scaleSize(10),
+    paddingHorizontal: scaleSize(100),
+    borderRadius: scaleSize(20),
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: scaleSize(20),
   },
   buttonText: {
     color: "white",
     fontWeight: "700",
-    fontSize: 20,
+    fontSize: scaleSize(20),
   },
   backgroundImage: {
     position: "absolute",
@@ -243,20 +251,20 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   signUpWrap: {
-    marginTop: 20,
+    marginTop: scaleSize(20),
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
   },
   signUpText: {
-    color: "835717",
-    fontSize: 20,
+    color: "#835717",
+    fontSize: scaleSize(20),
   },
   signUpLink: {
     color: "#835717",
-    marginLeft: 10,
+    marginLeft: scaleSize(10),
     fontWeight: "bold",
-    fontSize: 20,
+    fontSize: scaleSize(20),
   },
 });
 

@@ -4,6 +4,7 @@ import {
   Text,
   TextInput,
   StyleSheet,
+  Dimensions,
   TouchableOpacity,
   Image,
 } from "react-native";
@@ -11,6 +12,19 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import intersect from "../assets/img/Intersect.png";
 import back from "../assets/img/back.png";
+
+//dimensions for CSS to scale with
+const BASE_WIDTH = 1194;
+const BASE_HEIGHT = 834;
+
+// Get current screen dimensions
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const scaleWidth = screenWidth / BASE_WIDTH;
+const scaleHeight = screenHeight / BASE_HEIGHT;
+const scale = Math.min(scaleWidth, scaleHeight); // Choose the smaller scale factor to maintain aspect ratio
+
+// Helper function to scale sizes
+const scaleSize = (size) => size * scale;
 
 const PinEntryScreen = ({ navigation }) => {
   const [pin, setPin] = useState("");
@@ -113,16 +127,15 @@ const PinEntryScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#FFFEFB",
   },
   BackButton: {
     position: "absolute",
-    top: 40,
-    left: 20,
-    width: 50,
-    height: 50,
+    top: scaleSize(40),
+    left: scaleSize(20),
+    width: scaleSize(50),
+    height: scaleSize(50),
   },
   backgroundImage: {
     position: "absolute",
@@ -132,49 +145,48 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   errorText: {
-    fontSize: 20,
+    fontSize: scaleSize(20),
     color: "red",
     marginBottom: 20,
     textAlign: "center",
     fontWeight: "bold",
   },
-
   input: {
     width: "80%",
-    padding: 10,
+    padding: scaleSize(10),
     borderColor: "gray",
     borderWidth: 1,
-    marginBottom: 20,
+    marginBottom: scaleSize(20),
     textAlign: "center",
-    fontSize: 24,
+    fontSize: scaleSize(24),
     backgroundColor: "#FFFFFF",
-    borderRadius: 14,
-    bottom: 330,
+    borderRadius: scaleSize(14),
+    bottom: scaleSize(330),
   },
   titleWrap: {
-    marginTop: 100,
-    marginBottom: 20,
+    marginTop: scaleSize(100),
+    marginBottom: scaleSize(20),
   },
   titleStroke: {
-    fontSize: 100,
+    fontSize: scaleSize(100),
     color: "black",
     position: "absolute",
     textShadowColor: "black",
-    textShadowOffset: { width: 5, height: 5 },
-    textShadowRadius: 10,
+    textShadowOffset: { width: scaleSize(5), height: scaleSize(5) },
+    textShadowRadius: scaleSize(10),
     fontFamily: "McLaren",
     fontWeight: "bold",
   },
   title: {
     color: "#B36003",
     fontFamily: "McLaren",
-    fontSize: 100,
+    fontSize: scaleSize(100),
     fontWeight: "bold",
   },
   subtitle: {
     fontFamily: "McLaren",
-    fontSize: 30,
-    marginBottom: 100,
+    fontSize: scaleSize(30),
+    marginBottom: scaleSize(100),
   },
   inputWrap: {
     flexShrink: 1,
@@ -182,34 +194,34 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   input: {
-    width: 400,
-    paddingHorizontal: 10,
-    paddingVertical: 15,
-    fontSize: 18,
+    width: scaleSize(400),
+    paddingHorizontal: scaleSize(10),
+    paddingVertical: scaleSize(15),
+    fontSize: scaleSize(18),
     backgroundColor: "white",
-    borderWidth: 2,
+    borderWidth: scaleSize(2),
     borderColor: "orange",
-    borderRadius: 20,
+    borderRadius: scaleSize(20),
   },
   buttonContainer: {
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 40,
+    marginTop: scaleSize(40),
   },
   button: {
     backgroundColor: "#AD620E",
     flexShrink: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 50,
-    borderRadius: 20,
+    paddingVertical: scaleSize(10),
+    paddingHorizontal: scaleSize(50),
+    borderRadius: scaleSize(20),
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: scaleSize(20),
   },
   buttonText: {
     color: "white",
     fontWeight: "700",
-    fontSize: 20,
+    fontSize: scaleSize(20),
   },
 });
 

@@ -19,6 +19,19 @@ import QuizStartPage from "../components/QuizStartPage";
 import DropdownButton from "../components/DropdownButton";
 import Loading from "../components/Loading";
 
+//dimensions for CSS to scale with
+const BASE_WIDTH = 1194;
+const BASE_HEIGHT = 834;
+
+// Get current screen dimensions
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const scaleWidth = screenWidth / BASE_WIDTH;
+const scaleHeight = screenHeight / BASE_HEIGHT;
+const scale = Math.min(scaleWidth, scaleHeight); // Choose the smaller scale factor to maintain aspect ratio
+
+// Helper function to scale sizes
+const scaleSize = (size) => size * scale;
+
 // const { width: screenWidth, height: screenHeight } = Dimensions.get("window");
 const SwipeBook = (isMuted) => {
   const carouselRef = useRef(null);
