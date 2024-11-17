@@ -4,27 +4,27 @@ import { StatusBar } from 'expo-status-bar';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import BedRoomScreen from './Bedroom/BedRoomScreen';
+import BedRoomScreen from './screens/BedRoomScreen';
 import PinEntryScreen from './screens/PinPage'
 import LoginScreen from './screens/LoginScreen';
 import ParentUI from '../front-end/screens/ParentUI';
-import SignupScreen from './SignUp/signup';
+import SignupScreen from './screens/SignUpScreen';
 import SwipeBook from './screens/SwipeBook';
 import ForgotPin from './screens/ForgotPin';
 import OTPVerification from './screens/OTPVerification';
 import ResetPin from './screens/ResetPin';
 import LogoutSuccessful from './Logout Page';
 import UsernameDisplay from './UserName'
-import SettingsScreen from './SettingsScreen/settings'
+import SettingsScreen from './screens/SettingScreen'
 
-import { ReadAloudProvider } from './SettingsScreen/Storage';
+// import { ReadAloudProvider } from './SettingsScreen/Storage';
 import ChangePin from './screens/ChangePinScreen';
 import TrackingActivity from './screens/TrackingActivity';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <ReadAloudProvider>
+    // <ReadAloudProvider>
     
     <NavigationContainer>
       <Stack.Navigator>
@@ -45,7 +45,6 @@ export default function App() {
       </Stack.Navigator>
       
     </NavigationContainer>
-    </ReadAloudProvider>
     
   );
 }
