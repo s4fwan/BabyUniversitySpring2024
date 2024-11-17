@@ -1,8 +1,21 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, Dimensions, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { auth } from "../firebase";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+//dimensions for CSS to scale with
+const BASE_WIDTH = 1194;
+const BASE_HEIGHT = 834;
+
+// Get current screen dimensions
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const scaleWidth = screenWidth / BASE_WIDTH;
+const scaleHeight = screenHeight / BASE_HEIGHT;
+const scale = Math.min(scaleWidth, scaleHeight); // Choose the smaller scale factor to maintain aspect ratio
+
+// Helper function to scale sizes
+const scaleSize = (size) => size * scale;
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -35,17 +48,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   button: {
-    // width: '100%',
     backgroundColor: "blue",
-    paddingVertical: 15,
-    paddingHorizontal: 50,
-    borderRadius: 20,
+    paddingVertical: scaleSize(15), 
+    paddingHorizontal: scaleSize(50), 
+    borderRadius: scaleSize(20),
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: scaleSize(20), 
   },
   buttonText: {
     color: "white",
     fontWeight: "700",
-    fontSize: 20,
+    fontSize: scaleSize(20),
   },
 });
