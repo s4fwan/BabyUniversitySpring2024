@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, SafeAreaView,TouchableOpacity, Image } from "react-native";
 import CoverImage from "../assets/img/CoverPage.svg";
 import { useFonts } from "expo-font";
@@ -9,8 +9,17 @@ const CoverPage = ({ isActive, currentMode }) => {
   const [fontsLoaded] = useFonts({
     "KulimPark-Bold": require("../assets/fonts/KulimPark-Bold.ttf"),
   });
-
+  const [playReadAloud, setPlayReadAloud] = useState(false);
   const soundRef = useRef(null);
+
+
+  useEffect(() => {
+    async function checkSettings(){
+      const readAloudVal = await AsyncStorage.getItem("readAloudVal");
+      if (readAloudVal) setPlayReadAloud(readAloudVal === "true");
+    }
+    checkSettings();
+  },[])
 
   useEffect(() => {
     async function loadSound() {
@@ -19,7 +28,7 @@ const CoverPage = ({ isActive, currentMode }) => {
           uri: "https://storage.googleapis.com/tavola-italiano-res/sound/BookAudioPage0.mp3",
         });
         soundRef.current = sound;
-        if (isActive) {
+        if (isActive && playReadAloud) {
           await sound.playAsync();
         }
       } catch (error) {
@@ -36,7 +45,7 @@ const CoverPage = ({ isActive, currentMode }) => {
   }, [isActive]);
 
   useEffect(() => {
-    if (isActive && soundRef.current) {
+    if (isActive && soundRef.current && playReadAloud) {
       soundRef.current.playAsync();
     } else if (!isActive && soundRef.current) {
       soundRef.current.pauseAsync();

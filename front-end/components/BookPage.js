@@ -6,10 +6,10 @@ import { useNavigation } from "@react-navigation/native";
 import { Audio } from "expo-av";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
 const BookPage = ({ page, isActive, goToNextPage, pageInfo }) => {
   const navigation = useNavigation();
   const soundRef = useRef(null);
+  const soundEffectRef = useRef(null);
   const imageAnimationRef = useRef(null);
   const highlightTextRef = useRef(null);
   const [playReadAloud, setPlayReadAloud] = useState(false);
@@ -19,7 +19,9 @@ const BookPage = ({ page, isActive, goToNextPage, pageInfo }) => {
       const readAloudVal = await AsyncStorage.getItem("readAloudVal");
       const soundEffectVal = await AsyncStorage.getItem("soundEffectVal");
       if (readAloudVal) setPlayReadAloud(readAloudVal === "true");
-      if (soundEffectVal) setPlaySoundEffect(soundEffectVal);
+      if (soundEffectVal) setPlaySoundEffect(soundEffectVal === "true");
+
+      // Load the main sound
       try {
         const { sound } = await Audio.Sound.createAsync({
           uri: page.sound,
@@ -27,6 +29,16 @@ const BookPage = ({ page, isActive, goToNextPage, pageInfo }) => {
         soundRef.current = sound;
       } catch (error) {
         console.log("Failed to load sound:", error);
+      }
+
+      // Load the sound effect
+      try {
+        const { sound: soundEffect } = await Audio.Sound.createAsync({
+          uri: page.soundEffect,
+        });
+        soundEffectRef.current = soundEffect;
+      } catch (error) {
+        console.log("Failed to load sound effect:", error);
       }
     }
 
@@ -36,16 +48,22 @@ const BookPage = ({ page, isActive, goToNextPage, pageInfo }) => {
       if (soundRef.current) {
         soundRef.current.unloadAsync();
       }
+      if (soundEffectRef.current) {
+        soundEffectRef.current.unloadAsync();
+      }
     };
   }, []);
 
   useEffect(() => {
     async function handleSoundPlayback() {
       if (isActive) {
-
         if (soundRef.current && playReadAloud) {
           await soundRef.current.setPositionAsync(0);
           await soundRef.current.playAsync();
+        }
+        if (soundEffectRef.current && playSoundEffect) {
+          await soundEffectRef.current.setPositionAsync(0);
+          await soundEffectRef.current.playAsync();
         }
         if (imageAnimationRef.current) {
           imageAnimationRef.current.play();
@@ -56,6 +74,9 @@ const BookPage = ({ page, isActive, goToNextPage, pageInfo }) => {
       } else {
         if (soundRef.current) {
           await soundRef.current.pauseAsync();
+        }
+        if (soundEffectRef.current) {
+          await soundEffectRef.current.pauseAsync();
         }
         if (imageAnimationRef.current) {
           imageAnimationRef.current.reset();
@@ -83,6 +104,12 @@ const BookPage = ({ page, isActive, goToNextPage, pageInfo }) => {
       soundRef.current.playAsync();
     } else {
       console.log("soundRef is not loaded");
+    }
+    if (soundEffectRef.current && playSoundEffect) {
+      soundEffectRef.current.setPositionAsync(0);
+      soundEffectRef.current.playAsync();
+    } else {
+      console.log("soundEffectRef is not loaded");
     }
   };
 

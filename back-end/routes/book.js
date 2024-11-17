@@ -8,6 +8,7 @@ router.get('/:id', async (req, res) => {
     if (!book) {
       return res.status(404).json({ message: 'Book not found' });
     }
+    console.log(book.pages);
     res.status(200).json(book);
   } catch (error) {
     if (error.kind === 'ObjectId') {

@@ -43,12 +43,22 @@ const SwipeBook = (isMuted) => {
   const { bookId, currentMode } = route.params;
   const [bookPages, setBookPages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [playSoundEffect, setPlaySoundEffect] = useState(true);
+  
 
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
   const pageInfo = Array.from({ length: bookPages.length }, (_, index) => ({
     title: `Page ${index + 1}`,
   }));
+  
+  useEffect(() => {
+    async function checkSettings() {
+      const soundEffectVal = await AsyncStorage.getItem("soundEffectVal");
+      if (soundEffectVal) setPlaySoundEffect(soundEffectVal === "true");
+    }
+    checkSettings();
+  },[])
 
   useEffect(() => {
     if (carouselRef.current) {
@@ -203,7 +213,6 @@ const SwipeBook = (isMuted) => {
   };
 
   const handleGoToNextPage = (nextIndex) => {
-    console.log(nextIndex);
     if (carouselRef.current) {
       setCurrentPage(nextIndex + 1);
       setTimeout(() => {
@@ -288,7 +297,8 @@ const SwipeBook = (isMuted) => {
         }}
         onSnapToItem={handlePageChange}
         onScrollEnd={() => {
-          playSwipeSound();
+          if (playSoundEffect)
+            playSwipeSound();
           const index = carouselRef.current.currentIndex;
           if (
             pageRefs.current[index] &&

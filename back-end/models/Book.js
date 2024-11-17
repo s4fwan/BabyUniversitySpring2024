@@ -24,6 +24,10 @@ const BookSchema = new mongoose.Schema({
         type: String,
         default: "",
       },
+      soundEffect:{
+        type: String,
+        default: "",
+      },
     },
   ],
 });
