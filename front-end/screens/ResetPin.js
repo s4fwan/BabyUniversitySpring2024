@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     width: "100%",
-    marginTop: scaleSize(80), // Uncomment this if needed
+    marginTop: scaleSize(20), // Uncomment this if needed
   },
 
   labelWrap: {
@@ -199,7 +199,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     alignContent: "center",
-    marginTop: scaleSize(20),
     marginHorizontal: "auto",
     transform: [{ translateX: -scaleSize(30) }],
   },

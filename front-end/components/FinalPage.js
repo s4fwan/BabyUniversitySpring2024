@@ -51,12 +51,12 @@ const FinalPage = ({ isActive, currentMode }) => {
   }, [isActive]);
   return (
     <View style={styles.container}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.BackButton}
         onPress={() => navigation.goBack()}
       >
         <Image source={require("../assets/img/back.png")} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <Image source={picture} style={styles.pictureImg} />
       {/* <View style={styles.bodyText}>
         <Text style={styles.text}>Now you are a quantum physicist.</Text>

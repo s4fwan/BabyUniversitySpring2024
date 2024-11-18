@@ -115,12 +115,12 @@ const BookPage = ({ page, isActive, goToNextPage, pageInfo }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.BackButton}
         onPress={() => navigation.goBack()}
       >
         <Image source={require("../assets/img/back.png")} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* <View style={styles.dropdownWrapper}>
         <SelectDropdown

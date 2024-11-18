@@ -6,6 +6,8 @@ import {
   Text,
   Dimensions,
   useWindowDimensions,
+  TouchableOpacity,
+  Image
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -18,6 +20,7 @@ import QuizPage from "../components/QuizPage";
 import QuizStartPage from "../components/QuizStartPage";
 import DropdownButton from "../components/DropdownButton";
 import Loading from "../components/Loading";
+import { useNavigation } from "@react-navigation/native";
 
 //dimensions for CSS to scale with
 const BASE_WIDTH = 1194;
@@ -43,7 +46,8 @@ const SwipeBook = (isMuted) => {
   const { bookId, currentMode } = route.params;
   const [bookPages, setBookPages] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [playSoundEffect, setPlaySoundEffect] = useState(true);
+  const [playSoundEffect, setPlaySoundEffect] = useState(false);
+  const navigation = useNavigation();
   
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
 
@@ -224,6 +228,13 @@ const SwipeBook = (isMuted) => {
     <Loading message="Loading book pages..." />
   ) : (
     <View style={styles.container}>
+       <TouchableOpacity
+        style={styles.BackButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Image source={require("../assets/img/back.png")} />
+      </TouchableOpacity>
+
       <View style={styles.dropdownContainer}>
         <DropdownButton
           pageInfo={pageInfo}
@@ -331,5 +342,14 @@ const styles = StyleSheet.create({
     top: "10%",
     zIndex: 1,
   },
+  BackButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    width: 50,
+    height: 50,
+    zIndex: 1,
+  },
+
 });
 export default SwipeBook;

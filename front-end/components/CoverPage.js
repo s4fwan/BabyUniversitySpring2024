@@ -61,12 +61,12 @@ const CoverPage = ({ isActive, currentMode }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.BackButton}
         onPress={() => navigation.goBack()}
       >
         <Image source={require("../assets/img/back.png")} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <CoverImage style={styles.coverImage} />
     </View>
