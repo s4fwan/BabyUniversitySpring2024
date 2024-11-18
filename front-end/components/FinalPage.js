@@ -1,13 +1,23 @@
-import React, { useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import picture from "../assets/img/FinalPageImage.png";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from "expo-av";
 import { useNavigation } from "@react-navigation/native";
 
 const FinalPage = ({ isActive, currentMode }) => {
   const soundRef = useRef(null);
   const navigation = useNavigation();
+
+  const [playReadAloud, setPlayReadAloud] = useState(false);
+
+  useEffect(() => {
+    async function checkSettings() {
+      const readAloudVal = await AsyncStorage.getItem("readAloudVal");
+      if (readAloudVal) setPlayReadAloud(readAloudVal === "true");
+    }
+    checkSettings();
+  }, []);
 
   useEffect(() => {
     async function loadSound() {
@@ -16,7 +26,7 @@ const FinalPage = ({ isActive, currentMode }) => {
           uri: "https://storage.googleapis.com/tavola-italiano-res/Narration/BookAudioPage24.m4a",
         });
         soundRef.current = sound;
-        if (isActive) {
+        if (isActive && playReadAloud) {
           await sound.playAsync();
         }
       } catch (error) {
@@ -33,7 +43,7 @@ const FinalPage = ({ isActive, currentMode }) => {
   }, [isActive]);
 
   useEffect(() => {
-    if (isActive && soundRef.current) {
+    if (isActive && soundRef.current && playReadAloud) {
       soundRef.current.playAsync();
     } else if (!isActive && soundRef.current) {
       soundRef.current.pauseAsync();
@@ -41,9 +51,12 @@ const FinalPage = ({ isActive, currentMode }) => {
   }, [isActive]);
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.BackButton} onPress={()=>navigation.goBack()}>
+      {/* <TouchableOpacity
+        style={styles.BackButton}
+        onPress={() => navigation.goBack()}
+      >
         <Image source={require("../assets/img/back.png")} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <Image source={picture} style={styles.pictureImg} />
       {/* <View style={styles.bodyText}>
         <Text style={styles.text}>Now you are a quantum physicist.</Text>

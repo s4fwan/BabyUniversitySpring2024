@@ -86,9 +86,9 @@ const QuizPage = ({
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.BackButton} onPress={handleGoBack}>
+      {/* <TouchableOpacity style={styles.BackButton} onPress={handleGoBack}>
         <Image source={require("../assets/img/back.png")} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity style={styles.progress}>
         <Text style={styles.progressText}>
           {index + 1}/{length}

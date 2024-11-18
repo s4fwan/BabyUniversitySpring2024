@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, StyleSheet, SafeAreaView,TouchableOpacity, Image } from "react-native";
 import CoverImage from "../assets/img/CoverPage.svg";
 import { useFonts } from "expo-font";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from "expo-av";
 import { useNavigation } from "@react-navigation/native";
 const CoverPage = ({ isActive, currentMode }) => {
@@ -9,9 +10,20 @@ const CoverPage = ({ isActive, currentMode }) => {
   const [fontsLoaded] = useFonts({
     "KulimPark-Bold": require("../assets/fonts/KulimPark-Bold.ttf"),
   });
-
+  const [playReadAloud, setPlayReadAloud] = useState(false);
   const soundRef = useRef(null);
-
+  useEffect(() => {
+    async function checkSettings() {
+      try {
+        const readAloudVal = await AsyncStorage.getItem("readAloudVal");
+        console.log(readAloudVal);
+        if (readAloudVal) setPlayReadAloud(readAloudVal === "true");
+      } catch (error) {
+        console.error("Error fetching readAloudVal:", error);
+      }
+    }
+    checkSettings();
+  }, []);
   useEffect(() => {
     async function loadSound() {
       try {
@@ -19,7 +31,7 @@ const CoverPage = ({ isActive, currentMode }) => {
           uri: "https://storage.googleapis.com/tavola-italiano-res/sound/BookAudioPage0.mp3",
         });
         soundRef.current = sound;
-        if (isActive) {
+        if (isActive && playReadAloud) {
           await sound.playAsync();
         }
       } catch (error) {
@@ -36,7 +48,7 @@ const CoverPage = ({ isActive, currentMode }) => {
   }, [isActive]);
 
   useEffect(() => {
-    if (isActive && soundRef.current) {
+    if (isActive && soundRef.current && playReadAloud) {
       soundRef.current.playAsync();
     } else if (!isActive && soundRef.current) {
       soundRef.current.pauseAsync();
@@ -49,12 +61,12 @@ const CoverPage = ({ isActive, currentMode }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.BackButton}
         onPress={() => navigation.goBack()}
       >
         <Image source={require("../assets/img/back.png")} />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <CoverImage style={styles.coverImage} />
     </View>
