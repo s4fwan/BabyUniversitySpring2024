@@ -16,6 +16,12 @@ Dr Christopher Ferrie
 ## Project Description
 This project aims to transform Chris Ferrie’s science board books into an engaging mobile application for young children. Baby University lets users navigate through Chris' popular book, 'Quantum Physics for Babies'. Fluid animations and narration bring the pages to life, and together with a quiz, bring an exciting learning opportunity for babies.
 
+## Important Links
+GitHub: https://github.com/s4fwan/BabyUniversitySpring2024
+Jira: https://sds-baby-university.atlassian.net/jira/software/projects/SCRUM/boards/1
+Confluence: https://sds-baby-university.atlassian.net/wiki/home
+
+
 ## How to Contribute
 
 1. Clone repository to local device
